@@ -12,6 +12,7 @@ import FairyLight from "./components/FairyLights";
 import TreeLamp from "./components/TreeLamp";
 import AnimatedOrbitControls from "./components/AnimatedOrbitControls";
 import Character from "./components/Character";
+import Developer from "./components/Developer";
 
 // Dark mode toggle button component
 const DarkModeToggle = ({ isDarkMode, setIsDarkMode }) => (
@@ -27,7 +28,7 @@ const DarkModeToggle = ({ isDarkMode, setIsDarkMode }) => (
 const TvOnOff = ({ isTvOn, setIsTvOn }) => (
   <button
     onClick={() => setIsTvOn(!isTvOn)}
-    className="fixed top-8 right-8 px-4 py-2 bg-gray-800 text-white rounded-md z-10 hover:bg-gray-700"
+    className="fixed top-16 right-4 px-4 py-2 bg-gray-800 text-white rounded-md z-20 hover:bg-gray-700"
   >
     {isTvOn ? "Tv On" : "Tv Off"}
   </button>
@@ -167,6 +168,8 @@ export default function App() {
   return (
     <>
       <DarkModeToggle isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+      <TvOnOff isTvOn={isTvOn} setIsTvOn={setIsTvOn} />
+
       <Canvas
         className={`w-full h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-700'}`}
         camera={{ position: [0, 4, 10], fov: 55 }}
@@ -174,11 +177,12 @@ export default function App() {
       >
 
         <LivingRoom />
-        <Tv isDarkMode={isTvOn} />
+        <Tv isDarkMode={isDarkMode} isTvOn={isTvOn} />
         <Lamp isDarkMode={isDarkMode} />
         <TreeLamp isDarkMode={isDarkMode} />
 
         <Character />
+        {/* <Developer /> */}
         {/* <AnimatedOrbitControls /> */}
         {/* <FairyLight /> */}
         <LightHelpers isDarkMode={isDarkMode} />
