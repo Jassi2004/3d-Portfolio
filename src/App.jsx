@@ -1,9 +1,8 @@
 /* eslint-disable react/no-unknown-property */
 
-import { CameraControls, OrbitControls, useCamera } from "@react-three/drei";
-import { Canvas, useThree, extend } from "@react-three/fiber";
-import { DirectionalLight, DirectionalLightHelper, HemisphereLight, PointLight, SpotLight } from "three";
-import { useRef, useEffect, useState } from "react";
+import { OrbitControls } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { useRef } from "react";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import LivingRoom from "./components/LivingRoom";
 import Tv from "./components/Tv";
@@ -15,9 +14,6 @@ import Developer from "./components/Developer";
 import { useAppContext } from "./AppContext";
 import RelaxCharacter from "./components/RelaxCharacter";
 import LightHelpers from "./components/LightHelpers";
-import { DEFAULT_CAMERA } from "./constants";
-import CameraTransition from "./components/CameraTransition";
-import { CameraProvider } from "./components/Camera/CameraContext";
 import { RotateCcw } from "lucide-react";
 
 // Dark mode toggle button component
@@ -51,16 +47,6 @@ const AnimationControl = ({ animationState, setAnimationState }) => (
   </button>
 );
 
-// Reset Camera button
-const ResetCameraButton = ({ resetCamera }) => (
-  <button
-    onClick={resetCamera}
-    className="fixed top-40 right-4 px-4 py-2 bg-gray-800 text-white rounded-md z-20 hover:bg-gray-700"
-  >
-    Reset Camera
-  </button>
-);
-
 
 export default function App() {
   const { state, setState } = useAppContext();
@@ -69,13 +55,29 @@ export default function App() {
   // In App.jsx
   const handleResetCamera = () => {
     if (controlsRef.current) {
-      controlsRef.current.reset(); // This triggers the transition defined in CameraControls
+      controlsRef.current.reset();
     }
   };
+  const setCameraPosition = (position) => {
+    setState((prev) => ({ ...prev, cameraPosition: position }));
+  };
+
 
 
   return (
     <>
+      <button
+        onClick={() => setCameraPosition([10, 10, 10])}
+        className="fixed top-4 left-4 px-4 py-2 bg-gray-800 text-white rounded-md z-10 hover:bg-gray-700"
+      >
+        Perspective 1
+      </button>
+      <button
+        onClick={() => setCameraPosition([0, 5, 15])}
+        className="fixed top-16 left-4 px-4 py-2 bg-gray-800 text-white rounded-md z-10 hover:bg-gray-700"
+      >
+        Perspective 2
+      </button>
       <DarkModeToggle
         isDarkMode={state.isDarkMode}
         setIsDarkMode={(newMode) =>
@@ -111,7 +113,6 @@ export default function App() {
         }}
         shadows
       >
-        <CameraTransition />
         <LivingRoom />
         <Tv />
         <Lamp />

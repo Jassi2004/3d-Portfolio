@@ -1,5 +1,10 @@
+// AppContext.js
+
 import React, { createContext, useContext, useState } from "react";
-import { DEFAULT_CAMERA } from "./constants";
+import { DEFAULT_CAMERA } from "./constants"; // Assuming this is already defined
+
+// Import the positions structure
+import { CAMERA_POSITIONS } from "./positions";
 
 // Create a context for app state
 const AppContext = createContext();
@@ -10,21 +15,29 @@ export const AppProvider = ({ children }) => {
         isDarkMode: false,
         isTvOn: false,
         animationState: "idle",
-        camera: DEFAULT_CAMERA
+        camera: DEFAULT_CAMERA,
+        currentCameraPosition: CAMERA_POSITIONS.perspective1, // Default to perspective1
     });
 
-    // Function to reset the camera
-    const resetCamera = () => {
-        console.log("Resetting camera to:", DEFAULT_CAMERA); // Log to confirm the camera reset
-
+    // Function to change camera position
+    const setCameraPosition = (positionKey) => {
         setState(prev => ({
             ...prev,
-            camera: DEFAULT_CAMERA
+            currentCameraPosition: CAMERA_POSITIONS[positionKey], // Change camera position dynamically
         }));
     };
 
+    // // Function to reset the camera
+    // const resetCamera = () => {
+    //     setState(prev => ({
+    //         ...prev,
+    //         camera: DEFAULT_CAMERA,
+    //         currentCameraPosition: CAMERA_POSITIONS.perspective1, // Reset to perspective1
+    //     }));
+    // };
+
     return (
-        <AppContext.Provider value={{ state, setState }}>
+        <AppContext.Provider value={{ state, setState, setCameraPosition }}>
             {children}
         </AppContext.Provider>
     );
