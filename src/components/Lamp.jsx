@@ -6,11 +6,7 @@ function Lamp({ isDarkMode = false }) {
     const { scene } = useGLTF('/assets/models/lamp1.glb');
     const [scale, setScale] = useState({ x: .02, y: .02, z: .02 });
     const [position, setPosition] = useState({ x: 0, y: 6, z: -3 });
-    const spotlightRef = useRef();
 
-    // Lamp screen glow effect
-    const screenLightColor = isDarkMode ? "#4ca6ff" : "#ffffff";
-    const screenLightIntensity = isDarkMode ? 2 : 0;
 
     return (
         <>

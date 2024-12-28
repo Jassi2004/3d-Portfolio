@@ -1,8 +1,11 @@
 /* eslint-disable react/no-unknown-property */
 import { useGLTF } from '@react-three/drei';
 import { useState } from 'react';
+import { useAppContext } from '../AppContext';
 
-function Tv({ isDarkMode = false, isTvOn = false }) {
+function Tv() {
+    const { state, setState } = useAppContext();
+    const { isDarkMode, isTvOn } = state;
     const { scene } = useGLTF('/assets/models/tv1.glb');
     const [scale] = useState({ x: 4.8, y: 3.5, z: 4 });
     const [position] = useState({ x: -12.3, y: 4.8, z: -5 });
@@ -21,11 +24,11 @@ function Tv({ isDarkMode = false, isTvOn = false }) {
         };
 
         return isDarkMode ? {
-            emissive: 3,         // Reduced from 5
-            opacity: 0.8,        // Reduced from 1
-            glowOpacity: 0.2,    // Reduced from 0.6
-            pointLight: 4,       // Reduced from 8
-            spotLight: 1.5       // Reduced from 3
+            emissive: 3,         // Increased for light mode
+            opacity: .8,
+            glowOpacity: 1,
+            pointLight: 8,
+            spotLight: 2      // Reduced from 3
         } : {
             emissive: 5,         // Increased for light mode
             opacity: 1,
