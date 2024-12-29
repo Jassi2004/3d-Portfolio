@@ -14,9 +14,9 @@ export const AppProvider = ({ children }) => {
     const [state, setState] = useState({
         isDarkMode: false,
         isTvOn: false,
-        animationState: "idle",
         camera: DEFAULT_CAMERA,
         currentCameraPosition: CAMERA_POSITIONS.perspective1, // Default to perspective1
+        activeCharacter: "idle",
     });
 
     // Function to change camera position
@@ -27,17 +27,27 @@ export const AppProvider = ({ children }) => {
         }));
     };
 
-    // // Function to reset the camera
-    // const resetCamera = () => {
-    //     setState(prev => ({
-    //         ...prev,
-    //         camera: DEFAULT_CAMERA,
-    //         currentCameraPosition: CAMERA_POSITIONS.perspective1, // Reset to perspective1
-    //     }));
-    // };
+    // Function to turn tv on (Only turn on if it's not already on)
+    const setIsTvOn = () => {
+        if (!state.isTvOn) { // Only set to true if TV is off
+            setState(prev => ({
+                ...prev,
+                isTvOn: true
+            }));
+        }
+    };
 
+
+
+    // Function to set activeCharacter
+    const setActiveCharacter = (character) => {
+        setState((prev) => ({
+            ...prev,
+            activeCharacter: character,
+        }));
+    };
     return (
-        <AppContext.Provider value={{ state, setState, setCameraPosition }}>
+        <AppContext.Provider value={{ state, setState, setCameraPosition, setActiveCharacter, setIsTvOn }}>
             {children}
         </AppContext.Provider>
     );

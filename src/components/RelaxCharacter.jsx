@@ -1,46 +1,62 @@
 import React, { useEffect, useRef } from "react";
 import { useAnimations, useFBX, useGLTF } from "@react-three/drei";
 import { useAppContext } from "../AppContext";
-import { useFrame } from "@react-three/fiber";
+
+// Preload all required assets
+useGLTF.preload('/assets/models/Character.glb');
+
+// Create a utility function to rename bones
+const renameBones = (armature) => {
+    if (!armature) return;
+
+    armature.traverse((obj) => {
+        if (obj.isBone) {
+            // Only rename if it doesn't already have the prefix
+            if (!obj.name.startsWith('mixamorig')) {
+                obj.name = 'mixamorig' + obj.name;
+            }
+        }
+    });
+};
 
 export default function RelaxCharacter(props) {
-    const { nodes, materials } = useGLTF("/assets/models/Character.glb");
     const group = useRef();
-    const positionRef = useRef({ x: 0, y: .2, z: 2.4 }); // Relaxed position
+    const positionRef = useRef({ x: 0, y: .2, z: 2.4 });
+    const bonesRenamed = useRef(false);
 
-    // Load animations
+    // Load model and animations
+    const { nodes, materials } = useGLTF("/assets/models/Character.glb");
     const { animations: animationsRelax } = useFBX("/assets/animations/relax.fbx");
     const relaxAnimation = animationsRelax[0];
-
-    // Rename animation for clarity
     relaxAnimation.name = "relax";
-
-    useEffect(() => {
-        // Rename bones to match animation
-        if (nodes.Hips) {
-            const armature = nodes.Hips;
-            armature.traverse((obj) => {
-                if (obj.isBone) {
-                    obj.name = 'mixamorig' + obj.name;
-                }
-            });
-        }
-    }, [nodes]);
 
     const { actions } = useAnimations([relaxAnimation], group);
     const { state, setState } = useAppContext();
 
+    // Handle initial bone renaming
     useEffect(() => {
-        // Stop all other animations and play relax
+        if (!bonesRenamed.current && nodes.Hips) {
+            renameBones(nodes.Hips);
+            bonesRenamed.current = true;
+        }
+    }, [nodes]);
+
+    // Handle animation changes
+    useEffect(() => {
+        if (!bonesRenamed.current) return;
+
         const stopAllAnimations = () => {
             Object.values(actions).forEach(action => action?.stop());
         };
 
         stopAllAnimations();
-        actions.relax?.reset().play(); // Play the relax animation
-    }, [actions]);
+        actions.relax?.reset().play();
+    }, [actions, bonesRenamed.current]);
 
     const scale = { x: 1.7, y: 1.7, z: 1.7 };
+
+    // Don't render until bones are properly renamed
+    if (!bonesRenamed.current) return null;
 
     return (
         <group
@@ -122,3 +138,4 @@ export default function RelaxCharacter(props) {
 }
 
 useGLTF.preload('/assets/models/Character.glb');
+

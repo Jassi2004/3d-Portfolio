@@ -1,130 +1,96 @@
 import React, { useEffect, useRef } from "react";
 import { useAnimations, useFBX, useGLTF } from "@react-three/drei";
+import PropTypes from "prop-types";
 import { useAppContext } from "../AppContext";
-import { useFrame } from "@react-three/fiber";
 
-export default function Character(props) {
-    const { nodes, materials } = useGLTF("/assets/models/Character.glb");
+useGLTF.preload('/assets/models/Character.glb');
+
+const renameBones = (armature) => {
+    if (!armature) return;
+    armature.traverse((obj) => {
+        if (obj.isBone && !obj.name.startsWith('mixamorig')) {
+            obj.name = 'mixamorig' + obj.name;
+        }
+    });
+};
+
+const characterStates = {
+    relax: {
+        animationPath: "/assets/animations/relax.fbx",
+        position: { x: 0, y: 0.2, z: 2.4 },
+        rotation: [0, 3, 0],
+    },
+    walking: {
+        animationPath: "/assets/animations/Walking.fbx",
+        position: { x: 7, y: 0.2, z: -1 },
+        rotation: [0, 5, 0],
+    },
+    standToSit: {
+        animationPath: "/assets/animations/StandToSit.fbx",
+        position: { x: 0, y: 0.2, z: 1.5 },
+        rotation: [0, 3, 0],
+    },
+    idle: {
+        animationPath: "/assets/animations/Idle.fbx",
+        position: { x: 7, y: 0.2, z: -1 },
+        rotation: [0, 5, 5],
+    },
+};
+
+export default function Character({ scale = { x: 1.7, y: 1.7, z: 1.7 } }) {
     const group = useRef();
-    const startPosition = { x: 6, y: 0.3, z: -0.5 };
-    const targetPosition = { x: 2, y: 0.3, z: -0.5 }; // Final position after walking
-    const positionRef = useRef({ ...startPosition });
-    const walkingRef = useRef(false);
+    const bonesRenamed = useRef(false);
+    const { state } = useAppContext();
 
-    // Load animations
-    const { animations } = useFBX("/assets/animations/Walking.fbx");
-    const { animations: animationsSitting } = useFBX("/assets/animations/StandToSit.fbx");
-    const { animations: animationsIdle } = useFBX("/assets/animations/Idle.fbx");
-    const { animations: animationAim } = useFBX("/assets/animations/Aim.fbx");
-    const { animations: animationRelax } = useFBX("/assets/animations/relax.fbx");
+    // Get current character state with fallback to idle
+    const currentState = characterStates[state.activeCharacter] || characterStates.idle;
 
-    const idleAnimation = animationsIdle[0];
-    const walkingAnimation = animations[0];
-    const sittingAnimation = animationsSitting[0];
-    const aimAnimation = animationAim[0];
-    const relaxAnimation = animationRelax[0];
+    // Load character model
+    const { nodes, materials } = useGLTF("/assets/models/Character.glb");
 
-    // Rename the animations for clarity
-    idleAnimation.name = "idle";
-    walkingAnimation.name = "walking";
-    sittingAnimation.name = "sitting";
-    aimAnimation.name = "aim";
-    relaxAnimation.name = "relax";
+    // Load animation based on current state
+    const { animations } = useFBX(currentState.animationPath);
+    const animation = animations[0];
+    animation.name = "animation";
 
+    // Setup animations
+    const { actions } = useAnimations([animation], group);
+
+    // Handle bone renaming
     useEffect(() => {
-        // Rename the bones to match animation
-        if (nodes.Hips) {
-            const armature = nodes.Hips;
-            armature.traverse((obj) => {
-                if (obj.isBone) {
-                    obj.name = 'mixamorig' + obj.name;
-                }
-            });
+        if (!bonesRenamed.current && nodes.Hips) {
+            renameBones(nodes.Hips);
+            bonesRenamed.current = true;
         }
     }, [nodes]);
 
-    const { actions } = useAnimations([idleAnimation, walkingAnimation, sittingAnimation, aimAnimation], group);
-    const { state, setState } = useAppContext();
-
-    // Handle movement during walking animation
-    useFrame((state, delta) => {
-        if (walkingRef.current) {
-            // Calculate total distance to move
-            const totalDistance = startPosition.x - targetPosition.x;
-            // Calculate how much to move this frame based on remaining time
-            const moveSpeed = totalDistance / 1.5; // 1.5 seconds duration
-            const movement = moveSpeed * delta;
-
-            // Update position
-            if (positionRef.current.x > targetPosition.x) {
-                positionRef.current.x -= movement;
-                // Prevent overshooting
-                if (positionRef.current.x < targetPosition.x) {
-                    positionRef.current.x = targetPosition.x;
-                }
-            }
-
-            // Update group position
-            if (group.current) {
-                group.current.position.x = positionRef.current.x;
-                group.current.position.y = positionRef.current.y;
-                group.current.position.z = positionRef.current.z;
-            }
-        }
-    });
-
+    // Handle animation changes
     useEffect(() => {
-        // Stop all animations first
-        const stopAllAnimations = () => {
-            Object.values(actions).forEach(action => action?.stop());
+        if (!bonesRenamed.current) return;
+
+        Object.values(actions).forEach((action) => action?.stop());
+        actions.animation?.reset().play();
+
+        return () => {
+            Object.values(actions).forEach((action) => action?.stop());
         };
+    }, [actions, state.activeCharacter]);
 
-        // if (state.animationState === "relax") {
-        //     stopAllAnimations();
-        //     actions.idle?.reset().play();
-        //     walkingRef.current = false;
-        // }
-
-        if (state.animationState === "idle") {
-            stopAllAnimations();
-            actions.idle?.reset().play();
-            walkingRef.current = false;
+    // Handle rotation updates
+    useEffect(() => {
+        if (group.current) {
+            group.current.rotation.set(...currentState.rotation);
         }
-        else if (state.animationState === "walking") {
-            stopAllAnimations();
-            actions.walking?.reset().play();
-            walkingRef.current = true;
+    }, [currentState.rotation]);
 
-            // After walking for 1.5 seconds, transition to sitting
-            setTimeout(() => {
-                walkingRef.current = false;
-                setState(prev => ({ ...prev, animationState: "sitting" }));
-            }, 1500);
-        }
-        else if (state.animationState === "sitting") {
-            stopAllAnimations();
-            actions.sitting?.reset().play();
-            walkingRef.current = false;
-
-            // After sitting animation completes
-            setTimeout(() => {
-                setState(prev => ({ ...prev, animationState: "aiming" }));
-            }, 2000);
-        }
-        else if (state.animationState === "aiming") {
-            stopAllAnimations();
-            actions.aim?.reset().play();
-            walkingRef.current = false;
-        }
-    }, [state.animationState, actions, setState]);
-
-    const scale = { x: 1.7, y: 1.7, z: 1.7 };
+    if (!bonesRenamed.current) return null;
 
     return (
-        <group {...props} dispose={null} ref={group}
-            position={[positionRef.current.x, positionRef.current.y, positionRef.current.z]}
+        <group
+            ref={group}
+            position={[currentState.position.x, currentState.position.y, currentState.position.z]}
             scale={[scale.x, scale.y, scale.z]}
-            rotation={[0, -Math.PI / 2, 0]}>
+        >
             <primitive object={nodes.Hips} />
             <skinnedMesh
                 name="EyeLeft"
@@ -195,4 +161,12 @@ export default function Character(props) {
     );
 }
 
-useGLTF.preload('/assets/models/Character.glb');
+
+// Update PropTypes to only include scale since that's the only prop we're using now
+Character.propTypes = {
+    scale: PropTypes.shape({
+        x: PropTypes.number,
+        y: PropTypes.number,
+        z: PropTypes.number,
+    }),
+};

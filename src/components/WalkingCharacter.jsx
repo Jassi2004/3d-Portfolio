@@ -3,8 +3,20 @@ import { useAnimations, useFBX, useGLTF } from "@react-three/drei";
 import { useAppContext } from "../AppContext";
 import { useFrame } from "@react-three/fiber";
 
+
+const renameBones = (nodes) => {
+    if (nodes.Hips) {
+        nodes.Hips.traverse((obj) => {
+            if (obj.isBone) {
+                obj.name = 'mixamorig' + obj.name;
+            }
+        });
+    }
+};
 export default function WalkingCharacter(props) {
     const { nodes, materials } = useGLTF("/assets/models/Character.glb");
+    renameBones(nodes);
+
     const group = useRef();
     const positionRef = useRef({ x: 7, y: .2, z: -1 });
 

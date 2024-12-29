@@ -3,8 +3,20 @@ import { useAnimations, useFBX, useGLTF } from "@react-three/drei";
 import { useAppContext } from "../AppContext";
 import { useFrame } from "@react-three/fiber";
 
+
+const renameBones = (nodes) => {
+    if (nodes.Hips) {
+        nodes.Hips.traverse((obj) => {
+            if (obj.isBone) {
+                obj.name = 'mixamorig' + obj.name;
+            }
+        });
+    }
+};
 export default function StandToSitCharacter(props) {
     const { nodes, materials } = useGLTF("/assets/models/Character.glb");
+    renameBones(nodes);
+
     const group = useRef();
     const positionRef = useRef({ x: 0, y: .2, z: 1.5 }); // Relaxed position
 
