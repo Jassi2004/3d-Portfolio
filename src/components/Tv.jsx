@@ -1,17 +1,50 @@
 /* eslint-disable react/no-unknown-property */
-import { useGLTF } from '@react-three/drei';
-import { useState } from 'react';
+import { useGLTF, Text } from '@react-three/drei';
+import { useState, useEffect } from 'react';
 import { useAppContext } from '../AppContext';
 
 function Tv() {
-    const { state, setState } = useAppContext();
-    const { isDarkMode, isTvOn } = state;
+    const { state } = useAppContext();
+    const { isDarkMode, isTvOn, currentChannel } = state;
     const { scene } = useGLTF('/assets/models/tv1.glb');
     const [scale] = useState({ x: 4.8, y: 3.5, z: 4 });
     const [position] = useState({ x: -12.3, y: 4.8, z: -5 });
+    const [showChannelInfo, setShowChannelInfo] = useState(false);
 
     const backlightWidth = 5.4;
     const backlightHeight = 2.2;
+
+    // Grid layout constants
+    const channelBoxWidth = 2;  // Reduced width for grid layout
+    const channelBoxHeight = 0.45; // Slightly increased height
+    const gridSpacing = 0.2;      // Space between grid items
+    const gridColumns = 2;
+
+    // Channel data array
+    const channels = [
+        { number: 1, name: "About Me", color: "#4ca6ff" },
+        { number: 2, name: "Education", color: "#4ca6ff" },
+        { number: 3, name: "Experience", color: "#4ca6ff" },
+        { number: 4, name: "Skills", color: "#4ca6ff" },
+        { number: 5, name: "Projects", color: "#4ca6ff" },
+        { number: 6, name: "Contact", color: "#4ca6ff" },
+    ];
+
+    // Get current channel info
+    const getCurrentChannelInfo = () => {
+        return channels.find(channel => channel.number === currentChannel) || channels[0];
+    };
+
+    const showChannelInfoTemporarily = () => {
+        setShowChannelInfo(true);
+    };
+
+    // Effect to show channel info when TV is turned on
+    useEffect(() => {
+        if (isTvOn) {
+            showChannelInfoTemporarily();
+        }
+    }, [isTvOn]);
 
     // Intensity values based on mode
     const getIntensities = () => {
@@ -24,13 +57,13 @@ function Tv() {
         };
 
         return isDarkMode ? {
-            emissive: 3,         // Increased for light mode
-            opacity: .8,
+            emissive: state.tvEmissiveIntensity + 0.5,
+            opacity: 0.8,
             glowOpacity: 1,
             pointLight: 8,
-            spotLight: 2      // Reduced from 3
+            spotLight: 2
         } : {
-            emissive: 5,         // Increased for light mode
+            emissive: state.tvEmissiveIntensity + 3,
             opacity: 1,
             glowOpacity: 1,
             pointLight: 8,
@@ -39,6 +72,72 @@ function Tv() {
     };
 
     const intensities = getIntensities();
+    const currentChannelInfo = getCurrentChannelInfo();
+
+    // Channel Grid Component
+    const ChannelGrid = () => {
+        return (
+            <group position={[1, 3.2, position.z + 0.3]}>
+                {channels.map((channel, index) => {
+                    // Calculate grid position
+                    const row = Math.floor(index / gridColumns);
+                    const col = index % gridColumns;
+
+                    // Calculate x and y positions
+                    const xOffset = (col - 1) * (channelBoxWidth + gridSpacing);
+                    const yOffset = -row * (channelBoxHeight + gridSpacing);
+
+                    const isSelected = channel.number === currentChannel;
+
+                    return (
+                        <group
+                            key={channel.number}
+                            position={[xOffset, yOffset, 0]}
+                        >
+                            {/* Background for all channels */}
+                            <mesh position={[0, 0, -0.02]}>
+                                <planeGeometry
+                                    args={[channelBoxWidth + 0.05, channelBoxHeight + 0.05]}
+                                />
+                                <meshBasicMaterial
+                                    color="#000000"
+                                    transparent={true}
+                                    opacity={0.6}
+                                />
+                            </mesh>
+
+                            {/* Selection highlight */}
+                            {isSelected && (
+                                <mesh position={[0, 0, -0.01]}>
+                                    <planeGeometry
+                                        args={[channelBoxWidth, channelBoxHeight]}
+                                    />
+                                    <meshBasicMaterial
+                                        color={currentChannelInfo.color}
+                                        transparent={true}
+                                        opacity={0.3}
+                                    />
+                                </mesh>
+                            )}
+
+                            {/* Channel Text */}
+                            <Text
+                                position={[0, 0, 0]}
+                                fontSize={0.16}
+                                color={isSelected ? '#ffffff' : '#a0a0a0'}
+                                anchorX="center"
+                                anchorY="middle"
+                                outlineWidth={0.02}
+                                outlineColor="#000000"
+                            >
+                                {`${channel.number}. ${channel.name}`}
+                            </Text>
+                        </group>
+                    );
+                })}
+            </group>
+        );
+    };
 
     return (
         <>
@@ -48,56 +147,48 @@ function Tv() {
                 position={[position.x, position.y, position.z]}
             />
 
+            {/* TV Screen */}
             <mesh position={[-0.05, 2.4, position.z + 0.2]}>
                 <planeGeometry args={[backlightWidth, backlightHeight]} />
                 <meshStandardMaterial
-                    color="#4ca6ff"
-                    emissive="#4ca6ff"
+                    color={currentChannelInfo.color}
+                    emissive={currentChannelInfo.color}
                     emissiveIntensity={intensities.emissive}
                     transparent={true}
                     opacity={intensities.opacity}
                 />
             </mesh>
 
-            {isTvOn && (
-                <mesh position={[-0.05, 2.4, position.z - 0.19]}>
-                    <planeGeometry
-                        args={[backlightWidth * 1.1, backlightHeight * 1.1]}
-                    />
-                    <meshBasicMaterial
-                        color="#4ca6ff"
-                        transparent={true}
-                        opacity={intensities.glowOpacity}
-                    />
-                </mesh>
-            )}
+            {/* Channel Grid */}
+            {isTvOn && showChannelInfo && <ChannelGrid />}
 
+            {/* TV Lighting */}
             {isTvOn && (
                 <>
                     <pointLight
                         position={[position.x, position.y, position.z - 0.3]}
-                        color="#4ca6ff"
+                        color={currentChannelInfo.color}
                         intensity={intensities.pointLight}
                         distance={6}
                         decay={2}
                     />
                     <pointLight
                         position={[position.x - 2, position.y, position.z - 0.2]}
-                        color="#4ca6ff"
+                        color={currentChannelInfo.color}
                         intensity={intensities.pointLight * 0.5}
                         distance={4}
                         decay={2}
                     />
                     <pointLight
                         position={[position.x + 2, position.y, position.z - 0.2]}
-                        color="#4ca6ff"
+                        color={currentChannelInfo.color}
                         intensity={intensities.pointLight * 0.5}
                         distance={4}
                         decay={2}
                     />
                     <spotLight
                         position={[position.x, position.y, position.z - 1]}
-                        color="#4ca6ff"
+                        color={currentChannelInfo.color}
                         intensity={intensities.spotLight}
                         angle={Math.PI / 3}
                         penumbra={1}
@@ -105,6 +196,7 @@ function Tv() {
                         decay={2}
                     />
                 </>
+
             )}
         </>
     );

@@ -1,35 +1,27 @@
-// AppContext.js
-
 import React, { createContext, useContext, useState } from "react";
 import { DEFAULT_CAMERA } from "./constants"; // Assuming this is already defined
 
-// Import the positions structure
-import { CAMERA_POSITIONS } from "./positions";
+import { CAMERA_POSITIONS } from "./constants";
 
-// Create a context for app state
 const AppContext = createContext();
 
-// AppProvider component to wrap around the app and provide state
 export const AppProvider = ({ children }) => {
     const [state, setState] = useState({
         isDarkMode: false,
         isTvOn: false,
-        camera: DEFAULT_CAMERA,
-        currentCameraPosition: CAMERA_POSITIONS.perspective1, // Default to perspective1
         activeCharacter: "idle",
+        currentChannel: 1,
+        isRemoteActive: false,
+        currentCameraPosition: CAMERA_POSITIONS.perspective1, // Default to perspective1
+        camera: DEFAULT_CAMERA,
+        currentPerspective: 'defaultPerspective',  // Add this to your initial state
+        tvEmissiveIntensity: 2, // Default intensity
+
     });
 
-    // Function to change camera position
-    const setCameraPosition = (positionKey) => {
-        setState(prev => ({
-            ...prev,
-            currentCameraPosition: CAMERA_POSITIONS[positionKey], // Change camera position dynamically
-        }));
-    };
 
-    // Function to turn tv on (Only turn on if it's not already on)
     const setIsTvOn = () => {
-        if (!state.isTvOn) { // Only set to true if TV is off
+        if (!state.isTvOn) {
             setState(prev => ({
                 ...prev,
                 isTvOn: true
@@ -37,23 +29,55 @@ export const AppProvider = ({ children }) => {
         }
     };
 
-
-
-    // Function to set activeCharacter
     const setActiveCharacter = (character) => {
         setState((prev) => ({
             ...prev,
             activeCharacter: character,
         }));
     };
+
+    const setCurrentChannel = (channel) => {
+        setState(prev => ({
+            ...prev,
+            currentChannel: channel
+        }));
+    };
+
+    const setCurrentPerspective = (perspectiveKey) => {
+        setState((prev) => ({
+            ...prev,
+            currentPerspective: perspectiveKey, // Store the key instead of the position object
+        }));
+    };
+
+    const setEmissiveIntensity = (value) => {
+        setState((prev) => ({
+            ...prev,
+            tvEmissiveIntensity: value, // Default intensity
+        }));
+    };
+
+    const value = {
+        state,
+        setState,
+        setActiveCharacter,
+        setIsTvOn,
+        setCurrentChannel,
+        setCurrentPerspective,
+        setEmissiveIntensity
+    };
+
     return (
-        <AppContext.Provider value={{ state, setState, setCameraPosition, setActiveCharacter, setIsTvOn }}>
+        <AppContext.Provider value={value}>
             {children}
         </AppContext.Provider>
     );
 };
 
-// Custom hook to use app context
 export const useAppContext = () => {
-    return useContext(AppContext);
+    const context = useContext(AppContext);
+    if (!context) {
+        throw new Error('useAppContext must be used within an AppProvider');
+    }
+    return context;
 };

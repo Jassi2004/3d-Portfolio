@@ -13,6 +13,8 @@ import LightHelpers from "./components/LightHelpers";
 import { CameraController } from './CameraController';
 import { useAppContext } from "./AppContext";
 import IntroAnimationButton from "./components/IntroAnimationButton";
+import Remote from "./components/Remote";
+import TvControls from "./components/TvControls";
 
 // Animation states configuration
 const characterStates = {
@@ -57,6 +59,10 @@ const CAMERA_POSITIONS = {
     position: new Vector3(0, 2, 2),
     target: new Vector3(0, 1, -5),
   },
+  intoTheTvPerspective: {
+    position: new Vector3(0, 2, -4.5),
+    target: new Vector3(0, 5, -12),
+  },
   perspective1: {
     position: new Vector3(8, 8, 15),
     target: new Vector3(0, 0, 0),
@@ -69,9 +75,9 @@ const CAMERA_POSITIONS = {
 
 
 export default function App() {
-  const [currentPerspective, setCurrentPerspective] = useState('defaultPerspective');
+  // const [currentPerspective, setCurrentPerspective] = useState('defaultPerspective');
   // const [activeCharacter, setActiveCharacter] = useState("idle");
-  const { state, setState } = useAppContext();
+  const { state, setState, setCurrentPerspective } = useAppContext();
   const { activeCharacter } = useAppContext();
   const controlsRef = useRef();
 
@@ -81,6 +87,9 @@ export default function App() {
     }
   };
 
+  console.log(state.currentPerspective);
+
+
   return (
     <>
       {/* Camera perspective buttons */}
@@ -88,7 +97,7 @@ export default function App() {
         {Object.keys(CAMERA_POSITIONS).map((perspective) => (
           <button
             key={perspective}
-            className={`px-4 py-2 rounded-md ${currentPerspective === perspective
+            className={`px-4 py-2 rounded-md ${state.currentPerspective === perspective
               ? 'bg-blue-600 text-white'
               : 'bg-gray-200 text-gray-800'
               }`}
@@ -124,16 +133,12 @@ export default function App() {
         Reset Camera
       </button>
 
-      {/* Animation control buttons */}
-      {/* <AnimationButtons
-        setActiveCharacter={setActiveCharacter}
-        setCurrentPerspective={setCurrentPerspective}
-      /> */}
-
       {/* Intro Animation Button */}
       <IntroAnimationButton
         setCurrentPerspective={setCurrentPerspective}
       />
+
+      <TvControls />
 
       <Canvas
         className={`w-full h-screen ${state.isDarkMode ? 'bg-gray-900' : 'bg-gray-700'}`}
@@ -144,8 +149,8 @@ export default function App() {
         shadows
       >
         <CameraController
-          position={CAMERA_POSITIONS[currentPerspective].position}
-          target={CAMERA_POSITIONS[currentPerspective].target}
+          position={CAMERA_POSITIONS[state.currentPerspective].position}
+          target={CAMERA_POSITIONS[state.currentPerspective].target}
         />
 
         <LivingRoom />
@@ -161,6 +166,10 @@ export default function App() {
 
         <Character />
 
+        {state.currentPerspective === 'changeChannelPerspective' && (
+          <Remote />
+        )}
+        {/* <Remote /> */}
 
         <LightHelpers isDarkMode={state.isDarkMode} />
 
