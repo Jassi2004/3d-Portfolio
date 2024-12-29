@@ -138,7 +138,7 @@ export default function App() {
         setCurrentPerspective={setCurrentPerspective}
       />
 
-      <TvControls />
+      {/* <TvControls /> */}
 
       <Canvas
         className={`w-full h-screen ${state.isDarkMode ? 'bg-gray-900' : 'bg-gray-700'}`}
