@@ -86,7 +86,7 @@ function LightHelpers({ isDarkMode }) {
             sunlightRef.current = sunlight;
             scene.add(sunlight);
             sunHelperRef.current = new DirectionalLightHelper(sunlight, 1, "#FFD700");
-            scene.add(sunHelperRef.current);
+            // scene.add(sunHelperRef.current);
             console.log('  ✓ Added Sun Light (Primary) - Color: #ffd700, Intensity: 2.0');
 
 
@@ -95,7 +95,7 @@ function LightHelpers({ isDarkMode }) {
             lightRef1.current = light1;
             scene.add(light1);
             helperRef1.current = new DirectionalLightHelper(light1, 1, "#FF0000");
-            scene.add(helperRef1.current);
+            // scene.add(helperRef1.current);
             console.log('  ✓ Added Directional Light 1 - Color: #fff, Intensity: 1.0');
 
 
@@ -104,7 +104,7 @@ function LightHelpers({ isDarkMode }) {
             lightRef2.current = light2;
             scene.add(light2);
             helperRef2.current = new DirectionalLightHelper(light2, 1, "#00FF00");
-            scene.add(helperRef2.current);
+            // scene.add(helperRef2.current);
             console.log('  ✓ Added Directional Light 2 - Color: #fff, Intensity: 1.0');
 
 
@@ -113,7 +113,7 @@ function LightHelpers({ isDarkMode }) {
             lightRef3.current = light3;
             scene.add(light3);
             helperRef3.current = new DirectionalLightHelper(light3, 1, "#0000FF");
-            scene.add(helperRef3.current);
+            // scene.add(helperRef3.current);
             console.log('  ✓ Added Directional Light 3 - Color: #fff, Intensity: 0.3');
 
 
@@ -134,7 +134,7 @@ function LightHelpers({ isDarkMode }) {
             moonlightRef.current = moonlight;
             scene.add(moonlight);
             moonHelperRef.current = new DirectionalLightHelper(moonlight, 1, "#FFFFFF");
-            scene.add(moonHelperRef.current);
+            // scene.add(moonHelperRef.current);
             console.log('  ✓ Added Moon Light (Primary) - Color: #4169E1, Intensity: 1.2');
 
             const hemisphereLight = new HemisphereLight("#4169E1", "#191970", 0.15);
@@ -144,7 +144,7 @@ function LightHelpers({ isDarkMode }) {
             const hemisphereLightMarker = new DirectionalLight("#4169E1", 0);
             hemisphereLightMarker.position.set(0, 8, 0);
             hemisphereHelperRef.current = new DirectionalLightHelper(hemisphereLightMarker, 1, "#FFA500");
-            scene.add(hemisphereHelperRef.current);
+            // scene.add(hemisphereHelperRef.current);
             console.log('  ✓ Added Hemisphere Light - Sky: #4169E1, Ground: #191970, Intensity: 0.15');
 
             const pointLight1 = new PointLight("#4B0082", 0.2, 20);
@@ -153,7 +153,7 @@ function LightHelpers({ isDarkMode }) {
             scene.add(pointLight1);
             pointHelperRef1.current = new DirectionalLightHelper(new DirectionalLight(), 1, "#800080");
             pointHelperRef1.current.position.copy(pointLight1.position);
-            scene.add(pointHelperRef1.current);
+            // scene.add(pointHelperRef1.current);
             console.log('  ✓ Added Point Light 1 - Color: #4B0082, Intensity: 0.2, Distance: 20');
 
 
@@ -163,7 +163,7 @@ function LightHelpers({ isDarkMode }) {
             scene.add(spotLight);
             spotHelperRef.current = new DirectionalLightHelper(new DirectionalLight(), 1, "#00FFFF");
             spotHelperRef.current.position.copy(spotLight.position);
-            scene.add(spotHelperRef.current);
+            // scene.add(spotHelperRef.current);
             console.log('  ✓ Added spotlight - Color: #4B0082, Intensity: 0.2, Distance: 20');
 
 
@@ -173,7 +173,7 @@ function LightHelpers({ isDarkMode }) {
             scene.add(pointLight2);
             pointHelperRef2.current = new DirectionalLightHelper(new DirectionalLight(), 1, "#FF69B4");
             pointHelperRef2.current.position.copy(pointLight2.position);
-            scene.add(pointHelperRef2.current);
+            // scene.add(pointHelperRef2.current);
             console.log('  ✓ Added Point Light 2 - Color: #4B0082, Intensity: 0.2, Distance: 20');
 
 
@@ -182,7 +182,7 @@ function LightHelpers({ isDarkMode }) {
             lightRef1.current = light1;
             scene.add(light1);
             helperRef1.current = new DirectionalLightHelper(light1, 1, "#FF0000");
-            scene.add(helperRef1.current);
+            // scene.add(helperRef1.current);
             console.log('  ✓ Added DirectionalLight 1 - Color: #4B0082, Intensity: 0.2, Distance: 20');
 
             const light2 = new DirectionalLight("#191970", 0.25);
@@ -190,7 +190,7 @@ function LightHelpers({ isDarkMode }) {
             lightRef2.current = light2;
             scene.add(light2);
             helperRef2.current = new DirectionalLightHelper(light2, 1, "#00FF00");
-            scene.add(helperRef2.current);
+            // scene.add(helperRef2.current);
             console.log('  ✓ Added DirectionalLight 2 - Color: #4B0082, Intensity: 0.2, Distance: 20');
 
 
@@ -199,7 +199,7 @@ function LightHelpers({ isDarkMode }) {
             lightRef3.current = light3;
             scene.add(light3);
             helperRef3.current = new DirectionalLightHelper(light3, 1, "#0000FF");
-            scene.add(helperRef3.current);
+            // scene.add(helperRef3.current);
             console.log('  ✓ Added DirectionalLight 3 - Color: #4B0082, Intensity: 0.2, Distance: 20');
 
             console.log('✅ Dark mode setup complete\n');

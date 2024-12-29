@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three'; // Import THREE.js
 import { useAppContext } from '../AppContext';
+import HelperButtonSelect from './HelperButtonSelect';
+import CircularTouchPad from './CircularTouchPad';
 
 function Remote() {
     const { scene } = useGLTF('/assets/models/remote2.glb');
@@ -11,44 +13,6 @@ function Remote() {
     const [rotation] = useState({ x: 5.5, y: -.4, z: 0 });
     const { camera, gl } = useThree();
     const { state, setState } = useAppContext();
-
-    const chunkSize = 100; // Number of vertices per chunk
-
-    useEffect(() => {
-        // Traverse the scene and collect buttons
-        scene.traverse((child) => {
-            if (child.isMesh && child.name === 'MainButton_Buttons_0') { // Check if it's a button mesh
-                // Chunking vertices for the current mesh
-                const geometry = child.geometry;
-                const positions = geometry.attributes.position.array;
-                const totalVertices = positions.length / 3; // Number of vertices in the mesh
-
-                const colors = []; // Array to hold colors for each vertex
-
-                // Function to generate a random color
-                const getRandomColor = () => new THREE.Color(Math.random(), Math.random(), Math.random());
-
-                // Iterate through all vertices and group them into chunks of 50
-                for (let i = 0; i < totalVertices; i++) {
-                    const chunkIndex = Math.floor(i / chunkSize); // Determine which chunk the vertex belongs to
-                    const color = getRandomColor(); // Get a random color for each chunk
-
-                    // Push the color to the colors array
-                    colors.push(color.r, color.g, color.b); // Push r, g, b values for each vertex
-                }
-
-                // Create a new BufferAttribute for the colors
-                const colorAttribute = new THREE.BufferAttribute(new Float32Array(colors), 3); // Each vertex has r, g, b values
-
-                // Assign the color attribute to the geometry
-                geometry.setAttribute('color', colorAttribute);
-
-                // Apply vertex color material to the mesh
-                child.material = new THREE.MeshStandardMaterial({ vertexColors: true });
-            }
-        });
-    }, [scene]);
-
     const powerButtonRef = useRef(null);
     const glowRef = useRef(null); // Reference for glow mesh
 
@@ -91,9 +55,6 @@ function Remote() {
                     glowMesh.rotation.copy(child.rotation);
                     glowRef.current = glowMesh; // Store the glow mesh in the reference
                     scene.add(glowMesh); // Add the glow mesh to the scene
-                }
-                if (child.name === "MainButton_Buttons_0") {
-                    child.material.emissive = new THREE.Color('green');
                 }
             }
         });
@@ -140,6 +101,8 @@ function Remote() {
             onPointerDown={handlePointerDown} // Handle pointer down event on the whole group
         >
             <primitive object={scene} />
+            <CircularTouchPad position={[-0.019, 0.205, 0.1]} />
+            <HelperButtonSelect position={[-0.019, 0.205, 0.1]} />
         </group>
     );
 }

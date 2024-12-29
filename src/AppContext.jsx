@@ -16,7 +16,7 @@ export const AppProvider = ({ children }) => {
         camera: DEFAULT_CAMERA,
         currentPerspective: 'defaultPerspective',  // Add this to your initial state
         tvEmissiveIntensity: 2, // Default intensity
-
+        freeCameraMovement: false
     });
 
 
@@ -57,6 +57,15 @@ export const AppProvider = ({ children }) => {
         }));
     };
 
+    const setFreeCameraMovement = () => {
+        if (!state.freeCameraMovement) {
+            setState(prev => ({
+                ...prev,
+                freeCameraMovement: true
+            }));
+        }
+    };
+
     const value = {
         state,
         setState,
@@ -64,7 +73,8 @@ export const AppProvider = ({ children }) => {
         setIsTvOn,
         setCurrentChannel,
         setCurrentPerspective,
-        setEmissiveIntensity
+        setEmissiveIntensity,
+        setFreeCameraMovement
     };
 
     return (

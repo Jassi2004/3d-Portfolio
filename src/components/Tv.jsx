@@ -16,7 +16,7 @@ function Tv() {
 
     // Grid layout constants
     const channelBoxWidth = 2;  // Reduced width for grid layout
-    const channelBoxHeight = 0.45; // Slightly increased height
+    const channelBoxHeight = 0.5; // Slightly increased height
     const gridSpacing = 0.2;      // Space between grid items
     const gridColumns = 2;
 
@@ -79,52 +79,30 @@ function Tv() {
         return (
             <group position={[1, 3.2, position.z + 0.3]}>
                 {channels.map((channel, index) => {
-                    // Calculate grid position
                     const row = Math.floor(index / gridColumns);
                     const col = index % gridColumns;
-
-                    // Calculate x and y positions
                     const xOffset = (col - 1) * (channelBoxWidth + gridSpacing);
                     const yOffset = -row * (channelBoxHeight + gridSpacing);
-
                     const isSelected = channel.number === currentChannel;
 
                     return (
-                        <group
-                            key={channel.number}
-                            position={[xOffset, yOffset, 0]}
-                        >
-                            {/* Background for all channels */}
-                            <mesh position={[0, 0, -0.02]}>
-                                <planeGeometry
-                                    args={[channelBoxWidth + 0.05, channelBoxHeight + 0.05]}
-                                />
-                                <meshBasicMaterial
-                                    color="#000000"
-                                    transparent={true}
-                                    opacity={0.6}
-                                />
+                        <group key={channel.number} position={[xOffset, yOffset, 0]}>
+                            <mesh position={[0, -0.05, -0.05]}>
+                                <planeGeometry args={[channelBoxWidth + 0.1, channelBoxHeight + 0.1]} />
+                                <meshBasicMaterial color="#222222" transparent={true} opacity={0.8} />
                             </mesh>
 
-                            {/* Selection highlight */}
                             {isSelected && (
                                 <mesh position={[0, 0, -0.01]}>
-                                    <planeGeometry
-                                        args={[channelBoxWidth, channelBoxHeight]}
-                                    />
-                                    <meshBasicMaterial
-                                        color={currentChannelInfo.color}
-                                        transparent={true}
-                                        opacity={0.3}
-                                    />
+                                    <planeGeometry args={[channelBoxWidth, channelBoxHeight]} />
+                                    <meshBasicMaterial color={currentChannelInfo.color} transparent={true} opacity={1} />
                                 </mesh>
                             )}
 
-                            {/* Channel Text */}
                             <Text
                                 position={[0, 0, 0]}
-                                fontSize={0.16}
-                                color={isSelected ? '#ffffff' : '#a0a0a0'}
+                                fontSize={0.18}
+                                color={isSelected ? '#ffffff' : '#ff6118'}
                                 anchorX="center"
                                 anchorY="middle"
                                 outlineWidth={0.02}

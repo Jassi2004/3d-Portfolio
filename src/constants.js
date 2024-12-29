@@ -39,13 +39,3 @@ export const CAMERA_POSITIONS = {
         target: new Vector3(0, 0, 0),
     },
 };
-
-
-export const REMOTE_POSITIONS = {
-    // const [scale] = useState({ x: .2, y: 0.2, z: .2 }); //remote1
-    // const [position] = useState({ x: 1.5, y: 1, z: 0 });//remote1
-    // const [rotation] = useState({ x: .5, y: 0, z: .5 }); //remote1
-    // const [scale] = useState({ x: 4, y: 4, z: 4 }); //remote2
-    // const [position] = useState({ x: 1.5, y: 1, z: 0 }); //remote2
-    // const [rotation] = useState({ x: 5.5, y: -.4, z: 0 }); //remote2
-}
