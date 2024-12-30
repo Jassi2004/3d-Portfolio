@@ -19,6 +19,7 @@ import LonelyComponent from "../components/LonelyComponent";
 import QuickContactButton from "../components/QuickContantButton";
 import { Suspense, useState, useEffect } from 'react';
 import ThreeDErrorBoundary from "./PagesComponents/ThreeDErrorBoundary";
+import ControlButtons from "../components/RightControlButton";
 
 
 
@@ -114,17 +115,19 @@ const HomePage = () => {
                 <CameraDropdown />
 
                 {/* Dark mode toggle */}
-                <button
+                {/* TV toggle */}
+                {/* <button
                     onClick={() => setState(prev => ({ ...prev, isDarkMode: !state.isDarkMode }))}
                     className="fixed top-4 right-4 px-4 py-2 bg-gray-800 text-white rounded-md z-10 hover:bg-gray-700"
                 >
                     {state.isDarkMode ? "Light Mode" : "Dark Mode"}
                 </button>
 
-                {/* TV toggle */}
                 <TvToggleButton />
 
-                <QuickContactButton />
+                <QuickContactButton /> */}
+
+                <ControlButtons />
 
                 {/* Intro Animation Button */}
                 <IntroAnimationButton
