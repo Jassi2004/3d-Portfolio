@@ -1,6 +1,7 @@
 import { GUI } from 'lil-gui';
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useState, useRef } from 'react';
+useGLTF.preload('/assets/models/lamp1.glb');
 
 function Lamp({ isDarkMode = false }) {
     const { scene } = useGLTF('/assets/models/lamp1.glb');

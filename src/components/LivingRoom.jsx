@@ -1,18 +1,58 @@
-/* eslint-disable react/no-unknown-property */
-
 import { useGLTF } from "@react-three/drei";
+import { Suspense, useEffect } from "react";
 
-function LivingRoom() {
-    // Replace this URL with your actual model URL
-    const { scene: modelScene } = useGLTF("/assets/models/livingRoom.glb");
+// Preload the model
+useGLTF.preload("/assets/models/livingRoom.glb");
+
+function LivingRoomModel() {
+    const model = useGLTF("/assets/models/livingRoom.glb", true, true);
+
+    useEffect(() => {
+        // Cleanup function
+        return () => {
+            if (model) {
+                Object.values(model).forEach(value => {
+                    if (value?.dispose) {
+                        value.dispose();
+                    }
+                });
+            }
+        };
+    }, [model]);
+
+    // Error handling
+    if (!model) {
+        console.error("Failed to load living room model");
+        return null;
+    }
 
     return (
         <primitive
-            object={modelScene}
-            scale={[.4, .4, .4]}  // Adjust scale if needed
-            position={[0, 0, 0]}  // Adjust position if needed
-            rotation={[0, 0, 0]}  // Adjust rotation if needed
+            object={model.scene}
+            scale={[0.4, 0.4, 0.4]}
+            position={[0, 0, 0]}
+            rotation={[0, 0, 0]}
+            dispose={null}
         />
+    );
+}
+
+// Fallback component while loading
+function LoadingFallback() {
+    return (
+        <mesh>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color="gray" wireframe />
+        </mesh>
+    );
+}
+
+// Main component with error boundary
+function LivingRoom() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <LivingRoomModel />
+        </Suspense>
     );
 }
 

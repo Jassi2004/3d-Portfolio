@@ -80,7 +80,7 @@ const IntroAnimationButton = ({ setCurrentPerspective }) => {
         <div className={`
             fixed z-50 transition-all duration-700 ease-in-out
             ${hasBeenClicked
-                ? 'top-28 right-4 transform-none'
+                ? 'top-44 right-4 transform-none'
                 : 'inset-0 flex items-center justify-center'
             }
         `}>

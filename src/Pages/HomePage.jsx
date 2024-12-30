@@ -16,6 +16,10 @@ import Remote from "../components/Remote";
 import CameraDropdown from "../components/CameraDropdown";
 import TvToggleButton from "../components/TvToggleButton";
 import LonelyComponent from "../components/LonelyComponent";
+import QuickContactButton from "../components/QuickContantButton";
+import { Suspense, useState, useEffect } from 'react';
+import ThreeDErrorBoundary from "./PagesComponents/ThreeDErrorBoundary";
+
 
 
 
@@ -51,80 +55,141 @@ const CAMERA_POSITIONS = {
 };
 
 
-export default function HomePage() {
+// Custom Loading component
+const LoadingScreen = () => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setProgress(prev => {
+                const newProgress = prev + Math.random() * 15;
+                return newProgress > 100 ? 100 : newProgress;
+            });
+        }, 2000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900">
+            <div className="w-full max-w-md p-8">
+                <div className="space-y-6">
+                    {/* Loading animation */}
+                    <div className="flex justify-center mb-8">
+                        <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="relative w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div
+                            className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+
+                    {/* Loading text */}
+                    <div className="text-center">
+                        <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
+                            Loading Experience
+                        </p>
+                        <p className="text-gray-400 mt-2">
+                            {progress < 100 ? 'Preparing the scene...' : 'Almost ready!'}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Modified HomePage component with loading state
+const HomePage = () => {
     const { state, setState, setCurrentPerspective } = useAppContext();
     const controlsRef = useRef();
 
     return (
-        <>
-            {/* Camera perspective buttons */}
-            <CameraDropdown />
+        <Suspense fallback={<LoadingScreen />}>
+            <div className="relative w-full h-screen">
+                {/* Camera perspective buttons */}
+                <CameraDropdown />
 
-            {/* Dark mode toggle */}
-            <button
-                onClick={() => setState(prev => ({ ...prev, isDarkMode: !state.isDarkMode }))}
-                className="fixed top-4 right-4 px-4 py-2 bg-gray-800 text-white rounded-md z-10 hover:bg-gray-700"
-            >
-                {state.isDarkMode ? "Light Mode" : "Dark Mode"}
-            </button>
+                {/* Dark mode toggle */}
+                <button
+                    onClick={() => setState(prev => ({ ...prev, isDarkMode: !state.isDarkMode }))}
+                    className="fixed top-4 right-4 px-4 py-2 bg-gray-800 text-white rounded-md z-10 hover:bg-gray-700"
+                >
+                    {state.isDarkMode ? "Light Mode" : "Dark Mode"}
+                </button>
 
-            {/* TV toggle */}
-            <TvToggleButton />
+                {/* TV toggle */}
+                <TvToggleButton />
 
-            {/* Intro Animation Button */}
-            <IntroAnimationButton
-                setCurrentPerspective={setCurrentPerspective}
-            />
+                <QuickContactButton />
 
-            <Canvas
-                className={`w-full h-screen ${state.isDarkMode ? 'bg-gray-900' : 'bg-gray-700'}`}
-                camera={{
-                    position: state.camera.position,
-                    fov: state.camera.fov,
-                }}
-                shadows
-            >
-                {!state.freeCameraMovement && (
-                    <CameraController
-                        position={CAMERA_POSITIONS[state.currentPerspective].position}
-                        target={CAMERA_POSITIONS[state.currentPerspective].target}
-                    />
-                )}
-
-                <LivingRoom />
-                <Tv />
-                <Lamp />
-                <TreeLamp />
-                <Character />
-
-                {state.currentPerspective === 'changeChannelPerspective' && (
-                    <Remote />
-                )}
-
-                <LightHelpers isDarkMode={state.isDarkMode} />
-
-                <LonelyComponent
-                    message="Yes, I am lonely"
-                    position={[-20, 8, -20]} // Position it as needed in the scene
+                {/* Intro Animation Button */}
+                <IntroAnimationButton
+                    setCurrentPerspective={setCurrentPerspective}
                 />
 
-                <EffectComposer>
-                    <Bloom
-                        intensity={state.isDarkMode ? 3 : 1}
-                        luminanceThreshold={state.isDarkMode ? 0.1 : 0.9}
-                        luminanceSmoothing={state.isDarkMode ? 0.1 : 0.9}
-                        height={300}
-                        mipmapBlur={true}
-                        radius={0.8}
+                <Canvas
+                    className={`w-full h-screen ${state.isDarkMode ? 'bg-gray-900' : 'bg-gray-700'}`}
+                    camera={{
+                        position: state.camera.position,
+                        fov: state.camera.fov,
+                    }}
+                    shadows
+                >
+                    {!state.freeCameraMovement && (
+                        <CameraController
+                            position={CAMERA_POSITIONS[state.currentPerspective].position}
+                            target={CAMERA_POSITIONS[state.currentPerspective].target}
+                        />
+                    )}
+
+                    {/* <Suspense fallback={null}> */}
+                    <ThreeDErrorBoundary>
+                        <Suspense fallback={<LoadingScreen />}>
+                            <LivingRoom />
+                            <Tv />
+                            <Lamp />
+                            <TreeLamp />
+                        </Suspense>
+                    </ThreeDErrorBoundary>
+                    <Character />
+
+                    {state.currentPerspective === 'changeChannelPerspective' && (
+                        <Remote />
+                    )}
+
+                    <LightHelpers isDarkMode={state.isDarkMode} />
+
+                    <LonelyComponent
+                        message="Yes, I am lonely"
+                        position={[-20, 8, -20]}
                     />
-                </EffectComposer>
-                <OrbitControls
-                    ref={controlsRef}
-                    minDistance={1}
-                    maxDistance={40}
-                    enableDamping
-                />
-            </Canvas>
-        </>
+
+                    <EffectComposer>
+                        <Bloom
+                            intensity={state.isDarkMode ? 3 : 1}
+                            luminanceThreshold={state.isDarkMode ? 0.1 : 0.9}
+                            luminanceSmoothing={state.isDarkMode ? 0.1 : 0.9}
+                            height={300}
+                            mipmapBlur={true}
+                            radius={0.8}
+                        />
+                    </EffectComposer>
+                    {/* </Suspense> */}
+
+                    <OrbitControls
+                        ref={controlsRef}
+                        minDistance={1}
+                        maxDistance={40}
+                        enableDamping
+                    />
+                </Canvas>
+            </div>
+        </Suspense>
     );
-}
+};
+
+export default HomePage;

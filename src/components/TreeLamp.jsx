@@ -1,6 +1,7 @@
 import { GUI } from 'lil-gui';
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useState, useRef } from 'react';
+useGLTF.preload('/assets/models/TreeLamp.glb');
 
 function TreeLamp({ isDarkMode = false }) {
     const { scene } = useGLTF('/assets/models/TreeLamp.glb');

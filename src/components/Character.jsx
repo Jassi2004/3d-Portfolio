@@ -33,7 +33,7 @@ const characterStates = {
     idle: {
         animationPath: "/assets/animations/Idle.fbx",
         position: { x: 7, y: 0.2, z: -1 },
-        rotation: [0, 5, 5],
+        rotation: [0, 5.5, 5],
     },
 };
 
@@ -41,6 +41,7 @@ export default function Character({ scale = { x: 1.7, y: 1.7, z: 1.7 } }) {
     const group = useRef();
     const bonesRenamed = useRef(false);
     const { state } = useAppContext();
+    const lastRotation = useRef(null);
 
     // Get current character state with fallback to idle
     const currentState = characterStates[state.activeCharacter] || characterStates.idle;
@@ -76,12 +77,23 @@ export default function Character({ scale = { x: 1.7, y: 1.7, z: 1.7 } }) {
         };
     }, [actions, state.activeCharacter]);
 
-    // Handle rotation updates
+    // Handle rotation updates with persistence
     useEffect(() => {
         if (group.current) {
-            group.current.rotation.set(...currentState.rotation);
+            // Store the last rotation when changing states
+            lastRotation.current = currentState.rotation;
+
+            // Apply rotation
+            group.current.rotation.set(...lastRotation.current);
         }
-    }, [currentState.rotation]);
+    }, [currentState]);
+
+    // Ensure rotation is maintained after component remounts
+    useEffect(() => {
+        if (group.current && lastRotation.current) {
+            group.current.rotation.set(...lastRotation.current);
+        }
+    }, []);
 
     if (!bonesRenamed.current) return null;
 
@@ -90,8 +102,10 @@ export default function Character({ scale = { x: 1.7, y: 1.7, z: 1.7 } }) {
             ref={group}
             position={[currentState.position.x, currentState.position.y, currentState.position.z]}
             scale={[scale.x, scale.y, scale.z]}
+            rotation={currentState.rotation}
         >
             <primitive object={nodes.Hips} />
+            {/* Rest of the mesh components remain the same */}
             <skinnedMesh
                 name="EyeLeft"
                 geometry={nodes.EyeLeft.geometry}

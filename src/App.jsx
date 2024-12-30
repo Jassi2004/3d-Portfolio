@@ -9,6 +9,7 @@ import { SkillsModal } from './Pages/PagesComponents/SkillsModal';
 import ProjectsModal from './Pages/PagesComponents/ProjectsModal';
 import AccomplishmentsModal from './Pages/PagesComponents/AccomplishmentsModal';
 import MainPage from './Pages/MainPage';
+import Contact from './Pages/PagesComponents/Contact';
 
 const App = () => {
   return (
@@ -24,6 +25,8 @@ const App = () => {
         <Route path="/projects" element={<ProjectsModal />} />
         <Route path="/accomplishments" element={<AccomplishmentsModal />} />
         <Route path="/main" element={<MainPage />} />
+
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </Router>
   );

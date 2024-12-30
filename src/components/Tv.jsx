@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAppContext } from '../AppContext';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+useGLTF.preload('/assets/models/tv1.glb');
 
 function Tv() {
     const { state } = useAppContext();

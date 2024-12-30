@@ -9,7 +9,7 @@ export const AppProvider = ({ children }) => {
     const [state, setState] = useState({
         isDarkMode: false,
         isTvOn: false,
-        activeCharacter: "idle",
+        activeCharacter: "relax",
         currentChannel: 1,
         isRemoteActive: false,
         currentCameraPosition: CAMERA_POSITIONS.perspective1, // Default to perspective1
