@@ -15,6 +15,7 @@ import IntroAnimationButton from "../components/IntroAnimationButton";
 import Remote from "../components/Remote";
 import CameraDropdown from "../components/CameraDropdown";
 import TvToggleButton from "../components/TvToggleButton";
+import LonelyComponent from "../components/LonelyComponent";
 
 
 
@@ -102,6 +103,10 @@ export default function HomePage() {
 
                 <LightHelpers isDarkMode={state.isDarkMode} />
 
+                <LonelyComponent
+                    message="Yes, I am lonely"
+                    position={[-20, 8, -20]} // Position it as needed in the scene
+                />
 
                 <EffectComposer>
                     <Bloom

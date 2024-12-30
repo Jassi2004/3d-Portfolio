@@ -11,7 +11,7 @@ const CAMERA_PERSPECTIVES = {
     tvPerspective: {
         position: new Vector3(0, 3, 7.5),
         target: new Vector3(0, 0, 0),
-        label: 'TV View'
+        label: 'Close up'
     },
     walkingPerspective: {
         position: new Vector3(-4.5, 3.5, 5),
@@ -21,17 +21,17 @@ const CAMERA_PERSPECTIVES = {
     changeChannelPerspective: {
         position: new Vector3(0, 2, 2),
         target: new Vector3(0, 1, -5),
-        label: 'Select Channel'
+        label: 'Tv Channel'
     },
     intoTheTvPerspective: {
         position: new Vector3(0, 2, -4),
         target: new Vector3(0, 2.5, -5.2),
-        label: 'Enter TV View'
+        label: 'Enter Section'
     },
     perspective2: {
         position: new Vector3(-4, 2, -4),
         target: new Vector3(0, 0, 0),
-        label: 'Relaxation View'
+        label: 'Relax View'
     },
     perspective1: {
         position: new Vector3(8, 8, 15),
@@ -64,16 +64,27 @@ const CameraDropdown = () => {
         <div className="absolute top-4 left-4 z-10">
             <div className="relative">
                 {/* Camera Icon Button */}
-                <button
-                    className="p-2 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200 border border-white/20"
-                    onClick={toggleCamera}
-                >
-                    {state.freeCameraMovement ? (
-                        <CameraOff className="w-6 h-6 text-black" />
-                    ) : (
-                        <Camera className="w-6 h-6 text-black" />
-                    )}
-                </button>
+                <div className="flex items-center w-36 justify-between">
+
+
+
+                    {/* Camera Button */}
+                    <button
+                        className="p-2 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200 border border-white/20 flex items-center space-x-2"
+                        onClick={toggleCamera}
+                    >
+                        {state.freeCameraMovement ? (
+                            <CameraOff className="w-8 h-8 text-black" />
+                        ) : (
+                            <>
+                                <Camera className="w-6 h-6 text-black" />
+                                <span className="text-black text-sm">Click to explore</span>
+                            </>
+                        )}
+                    </button>
+
+
+                </div>
 
                 {/* Camera Perspective List - Only visible when freeCameraMovement is true */}
                 {!state.freeCameraMovement && (

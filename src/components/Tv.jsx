@@ -1,7 +1,9 @@
 /* eslint-disable react/no-unknown-property */
-import { useGLTF, Text } from '@react-three/drei';
+import { useGLTF, Text, GradientTexture } from '@react-three/drei';
 import { useState, useEffect } from 'react';
 import { useAppContext } from '../AppContext';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 
 function Tv() {
     const { state } = useAppContext();
@@ -10,43 +12,46 @@ function Tv() {
     const [scale] = useState({ x: 4.8, y: 3.5, z: 4 });
     const [position] = useState({ x: -12.3, y: 4.8, z: -5 });
     const [showChannelInfo, setShowChannelInfo] = useState(false);
+    const [hoverChannel, setHoverChannel] = useState(null);
+    const [animationProgress, setAnimationProgress] = useState(0);
 
     const backlightWidth = 5.4;
     const backlightHeight = 2.2;
 
-    // Grid layout constants
-    const channelBoxWidth = 2;  // Reduced width for grid layout
-    const channelBoxHeight = 0.5; // Slightly increased height
-    const gridSpacing = 0.2;      // Space between grid items
+    // Updated channel box dimensions for a more cinematic feel
+    const channelBoxWidth = 2.2;
+    const channelBoxHeight = 0.4;
+    const gridSpacing = 0.3;
     const gridColumns = 2;
 
-    // Channel data array
+    // Enhanced channel data with more visual properties
     const channels = [
-        { number: 1, name: "About Me", color: "#4ca6ff" },
-        { number: 2, name: "Education", color: "#4ca6ff" },
-        { number: 3, name: "Experience", color: "#4ca6ff" },
-        { number: 4, name: "Skills", color: "#4ca6ff" },
-        { number: 5, name: "Projects", color: "#4ca6ff" },
-        { number: 6, name: "Contact", color: "#4ca6ff" },
+        { number: 1, name: "About Me", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 2, name: "Education", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 3, name: "Experience", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 4, name: "Skills", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 5, name: "Projects", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 6, name: "Contact", color: "#4ca6ff", hoverColor: "#7dbeff" }
     ];
 
-    // Get current channel info
     const getCurrentChannelInfo = () => {
         return channels.find(channel => channel.number === currentChannel) || channels[0];
     };
 
-    const showChannelInfoTemporarily = () => {
-        setShowChannelInfo(true);
-    };
-
-    // Effect to show channel info when TV is turned on
     useEffect(() => {
         if (isTvOn) {
-            showChannelInfoTemporarily();
+            setShowChannelInfo(true);
+            setAnimationProgress(0);
         }
     }, [isTvOn]);
 
-    // Intensity values based on mode
+    // Animation frame for smooth transitions
+    useFrame((state, delta) => {
+        if (isTvOn && animationProgress < 1) {
+            setAnimationProgress(prev => Math.min(prev + delta * 2, 1));
+        }
+    });
+
     const getIntensities = () => {
         if (!isTvOn) return {
             emissive: 0,
@@ -56,25 +61,49 @@ function Tv() {
             spotLight: 0
         };
 
-        return isDarkMode ? {
-            emissive: state.tvEmissiveIntensity + 0.5,
-            opacity: 0.8,
-            glowOpacity: 1,
-            pointLight: 8,
-            spotLight: 2
-        } : {
-            emissive: state.tvEmissiveIntensity + 3,
-            opacity: 1,
-            glowOpacity: 1,
-            pointLight: 8,
-            spotLight: 3
-        };
+        const isChangeChannelPerspective = state.currentPerspective === 'changeChannelPerspective';
+
+        if (isDarkMode) {
+            return isChangeChannelPerspective ? {
+                emissive: state.tvEmissiveIntensity - 0.5, // Adjust as needed
+                opacity: 0.6, // Lower opacity for this perspective in dark mode
+                glowOpacity: 0.8,
+                pointLight: 6,
+                spotLight: 1.5
+            } : {
+                emissive: state.tvEmissiveIntensity + 0.5,
+                opacity: 0.8,
+                glowOpacity: 1,
+                pointLight: 8,
+                spotLight: 2
+            };
+        } else {
+            return isChangeChannelPerspective ? {
+                emissive: state.tvEmissiveIntensity + 2, // Adjust as needed
+                opacity: 0.9, // Higher opacity for this perspective in light mode
+                glowOpacity: 1,
+                pointLight: 7,
+                spotLight: 2.5
+            } : {
+                emissive: state.tvEmissiveIntensity + 3,
+                opacity: 1,
+                glowOpacity: 1,
+                pointLight: 8,
+                spotLight: 3
+            };
+        }
+    };
+
+    const darkenColor = (colorHex, factor) => {
+        const color = new THREE.Color(colorHex);
+        color.multiplyScalar(factor);  // This will reduce the RGB values by the factor
+        return color;
     };
 
     const intensities = getIntensities();
     const currentChannelInfo = getCurrentChannelInfo();
 
-    // Channel Grid Component
+    // Enhanced Channel Grid Component with animations and hover effects
     const ChannelGrid = () => {
         return (
             <group position={[1, 3.2, position.z + 0.3]}>
@@ -84,32 +113,128 @@ function Tv() {
                     const xOffset = (col - 1) * (channelBoxWidth + gridSpacing);
                     const yOffset = -row * (channelBoxHeight + gridSpacing);
                     const isSelected = channel.number === currentChannel;
+                    const isHovered = channel.number === hoverChannel;
+
+                    // Calculate animation offsets
+                    const entranceDelay = index * 0.1;
+                    const animationOffset = Math.max(0, Math.min(1, (animationProgress - entranceDelay) * 2));
+                    const yAnimation = (1 - animationOffset) * 0.5;
+                    const opacityAnimation = animationOffset;
 
                     return (
-                        <group key={channel.number} position={[xOffset, yOffset, 0]}>
-                            <mesh position={[0, -0.05, -0.05]}>
-                                <planeGeometry args={[channelBoxWidth + 0.1, channelBoxHeight + 0.1]} />
-                                <meshBasicMaterial color="#222222" transparent={true} opacity={0.8} />
-                            </mesh>
+                        <group
+                            key={channel.number}
+                            position={[xOffset, yOffset - yAnimation, 0]}
+                            onPointerOver={() => setHoverChannel(channel.number)}
+                            onPointerOut={() => setHoverChannel(null)}
+                        >
+                            {/* Glow effect for selected channel */}
 
                             {isSelected && (
-                                <mesh position={[0, 0, -0.01]}>
-                                    <planeGeometry args={[channelBoxWidth, channelBoxHeight]} />
-                                    <meshBasicMaterial color={currentChannelInfo.color} transparent={true} opacity={1} />
-                                </mesh>
+                                <>
+                                    {/* Outer glow border */}
+                                    <mesh position={[0, 0, -0.15]}>
+                                        <planeGeometry args={[channelBoxWidth + 0.1, channelBoxHeight + 0.1]} />
+                                        <meshBasicMaterial
+                                            color={
+                                                state.currentPerspective === 'changeChannelPerspective' && !isDarkMode
+                                                    ? darkenColor(currentChannelInfo.color, 5) // Darken color for light mode in changeChannelPerspective
+                                                    : currentChannelInfo.color
+                                            }
+                                            transparent={true}
+                                            opacity={
+                                                state.currentPerspective === 'changeChannelPerspective'
+                                                    ? (isDarkMode ? 0.5 : 1) // Dark mode and light mode adjustments
+                                                    : 0.4 // Default opacity for other views
+                                            }
+                                            blending={THREE.AdditiveBlending}
+                                        />
+                                    </mesh>
+
+                                    {/* Inner glow */}
+                                    <mesh position={[0, 0, -0.1]}>
+                                        <planeGeometry args={[channelBoxWidth + 0.1, channelBoxHeight + 0.1]} />
+                                        <meshBasicMaterial
+                                            color={
+                                                state.currentPerspective === 'changeChannelPerspective' && !isDarkMode
+                                                    ? darkenColor(currentChannelInfo.color, 5) // Darken color for light mode in changeChannelPerspective
+                                                    : currentChannelInfo.color
+                                            }
+                                            transparent={true}
+                                            opacity={
+                                                state.currentPerspective === 'changeChannelPerspective'
+                                                    ? (isDarkMode ? 0.7 : 0.9) // Dark mode and light mode adjustments
+                                                    : 0.6 // Default opacity for other views
+                                            }
+                                            blending={THREE.AdditiveBlending}
+                                        />
+                                    </mesh>
+                                </>
                             )}
 
+                            {/* Channel box background */}
+                            <mesh position={[0, 0, -0.05]}>
+                                <planeGeometry args={[channelBoxWidth, channelBoxHeight]} />
+                                <meshBasicMaterial
+                                    color={isSelected ? currentChannelInfo.color : "#1a1a1a"}
+                                    transparent={true}
+                                    opacity={isSelected ? 0.95 : 0.7 * opacityAnimation}
+                                />
+                            </mesh>
+
+                            {/* Text elements with enhanced visibility */}
                             <Text
-                                position={[0, 0, 0]}
+                                position={[-0.9, 0, 0]}
                                 fontSize={0.18}
-                                color={isSelected ? '#ffffff' : '#ff6118'}
+                                color={isSelected ? '#ffffff' : (isHovered ? channel.hoverColor : '#666666')}
                                 anchorX="center"
                                 anchorY="middle"
-                                outlineWidth={0.02}
+                                opacity={opacityAnimation}
+                                style={{ fontFamily: 'Inter' }}
+                                outlineWidth={isSelected ? 0.005 : 0}
                                 outlineColor="#000000"
                             >
-                                {`${channel.number}. ${channel.name}`}
+                                {channel.number}
                             </Text>
+
+                            <Text
+                                position={[0.2, 0, 0]}
+                                fontSize={0.16}
+                                color={isSelected ? '#ffffff' : (isHovered ? '#ffffff' : '#999999')}
+                                anchorX="left"
+                                anchorY="middle"
+                                opacity={opacityAnimation}
+                                style={{ fontFamily: 'Inter' }}
+                                outlineWidth={isSelected ? 0.005 : 0}
+                                outlineColor="#000000"
+                            >
+                                {channel.name}
+                            </Text>
+
+                            {/* Enhanced selection indicator (circle) */}
+                            {isSelected && (
+                                <>
+                                    {/* Outer glow for circle */}
+                                    <mesh position={[-0.9, 0, -0.02]}>
+                                        <circleGeometry args={[0.18, 32]} />
+                                        <meshBasicMaterial
+                                            color={currentChannelInfo.color}
+                                            transparent={true}
+                                            opacity={0.4}
+                                            blending={THREE.AdditiveBlending}
+                                        />
+                                    </mesh>
+                                    {/* Main circle */}
+                                    <mesh position={[-0.9, 0, 0]}>
+                                        <circleGeometry args={[0.15, 32]} />
+                                        <meshBasicMaterial
+                                            color={currentChannelInfo.color}
+                                            transparent={true}
+                                            opacity={0.9}
+                                        />
+                                    </mesh>
+                                </>
+                            )}
                         </group>
                     );
                 })}
@@ -125,7 +250,7 @@ function Tv() {
                 position={[position.x, position.y, position.z]}
             />
 
-            {/* TV Screen */}
+            {/* Enhanced TV Screen with subtle gradient */}
             <mesh position={[-0.05, 2.4, position.z + 0.2]}>
                 <planeGeometry args={[backlightWidth, backlightHeight]} />
                 <meshStandardMaterial
@@ -134,13 +259,19 @@ function Tv() {
                     emissiveIntensity={intensities.emissive}
                     transparent={true}
                     opacity={intensities.opacity}
-                />
+                >
+                    <GradientTexture
+                        attach="gradientMap"
+                        stops={[0, 1]}
+                        colors={['#000000', currentChannelInfo.color]}
+                    />
+                </meshStandardMaterial>
             </mesh>
 
-            {/* Channel Grid */}
+            {/* Channel Grid with enhanced visibility */}
             {isTvOn && showChannelInfo && <ChannelGrid />}
 
-            {/* TV Lighting */}
+            {/* Enhanced TV Lighting */}
             {isTvOn && (
                 <>
                     <pointLight
@@ -174,7 +305,6 @@ function Tv() {
                         decay={2}
                     />
                 </>
-
             )}
         </>
     );

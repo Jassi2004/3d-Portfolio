@@ -2,49 +2,49 @@ import React, { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useAppContext } from '../AppContext';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const HelperButtonSelect = ({ position }) => {
-    const { setCurrentPerspective, state } = useAppContext(); // Get state and setCurrentPerspective
-    const navigate = useNavigate(); // Hook to navigate between pages
+    const { setCurrentPerspective, state } = useAppContext();
+    const navigate = useNavigate();
 
     const buttonRef = useRef(null);
     const textRef = useRef(null);
     const textGlowRef = useRef(null);
     const [glowIntensity, setGlowIntensity] = useState(1);
+    const [isAnimating, setIsAnimating] = useState(false);
 
-    // Define the channels array
     const channels = [
-        { number: 1, name: "About Me", color: "#4ca6ff" },
-        { number: 2, name: "Education", color: "#4ca6ff" },
-        { number: 3, name: "Experience", color: "#4ca6ff" },
-        { number: 4, name: "Skills", color: "#4ca6ff" },
-        { number: 5, name: "Projects", color: "#4ca6ff" },
-        { number: 6, name: "Contact", color: "#4ca6ff" },
+        { number: 1, name: "About", path: "/about", color: "#4ca6ff" },
+        { number: 2, name: "Education", path: "/education", color: "#4ca6ff" },
+        { number: 3, name: "Experience", path: "/experience", color: "#4ca6ff" },
+        { number: 4, name: "Skills", path: "/skills", color: "#4ca6ff" },
+        { number: 5, name: "Projects", path: "/projects", color: "#4ca6ff" },
+        { number: 6, name: "Contact", path: "/contact", color: "#4ca6ff" },
     ];
 
-    // Handle button click, use current channel to navigate
     const handleSelectClick = (event) => {
         event.stopPropagation();
 
-        // Get the current channel index
-        const currentChannelIndex = state.currentChannel;
+        if (isAnimating) return;
 
-        // Get the corresponding channel object
-        const currentChannel = channels[currentChannelIndex];
+        const currentChannel = channels[state.currentChannel];
 
         if (currentChannel) {
-            // Navigate to the page based on the current channel
+            setIsAnimating(true);
+
+            // Start TV zoom animation
             setCurrentPerspective("intoTheTvPerspective");
 
+            // Navigate after animation
             setTimeout(() => {
-                navigate(`/${currentChannel.name.toLowerCase().replace(/\s+/g, '-')}`); // Convert the channel name to URL-friendly format
+                navigate(currentChannel.path);
                 setCurrentPerspective("defaultPerspective");
+                setIsAnimating(false);
             }, 1000);
         }
     };
 
-    // Match the same glow animation timing from CircularTouchPad
     useFrame(() => {
         const intensity = (Math.sin(Date.now() * 0.005) + 1) * 0.8 + 0.2;
         setGlowIntensity(intensity);
@@ -53,36 +53,36 @@ const HelperButtonSelect = ({ position }) => {
             textRef.current.material.emissiveIntensity = intensity;
         }
         if (textGlowRef.current) {
-            textGlowRef.current.material.opacity = intensity;
+            textGlowRef.current.material.opacity = intensity * 0.7;
+        }
+        if (buttonRef.current && !isAnimating) {
+            buttonRef.current.scale.setScalar(1 + Math.sin(Date.now() * 0.003) * 0.05);
         }
     });
 
     return (
         <group position={position} scale={[1, 1, 0.52]}>
-            {/* Main button */}
             <mesh
                 ref={buttonRef}
                 onPointerDown={handleSelectClick}
             >
                 <sphereGeometry args={[0.035, 32, 32]} />
                 <meshStandardMaterial
-                    color="#333333"
+                    color={isAnimating ? "#ff4a4a" : "#333333"}
                     roughness={0.7}
-                    metalness={0.1}
-                    emissive="black"
-                    emissiveIntensity={0}
+                    metalness={0.3}
+                    emissive={isAnimating ? "#ff4a4a" : "black"}
+                    emissiveIntensity={isAnimating ? 0.5 : 0}
                 />
             </mesh>
 
-            {/* OK Text */}
             <group position={[0, -0.002, 0.035]}>
-                {/* Main text */}
                 <mesh ref={textRef}>
                     <planeGeometry args={[0.03, 0.015]} />
                     <meshStandardMaterial
                         color="#e24a4a"
                         roughness={0.5}
-                        metalness={0.1}
+                        metalness={0.3}
                         emissive="#e24a4a"
                         emissiveIntensity={glowIntensity}
                         transparent
@@ -106,7 +106,6 @@ const HelperButtonSelect = ({ position }) => {
                     </meshStandardMaterial>
                 </mesh>
 
-                {/* Glow layer */}
                 <mesh
                     ref={textGlowRef}
                     position={[0, 0, -0.001]}
@@ -114,7 +113,7 @@ const HelperButtonSelect = ({ position }) => {
                 >
                     <planeGeometry args={[0.03, 0.015]} />
                     <meshBasicMaterial
-                        color="#e24a4a"
+                        color="#ff4a4a"
                         transparent
                         opacity={glowIntensity}
                         blending={THREE.AdditiveBlending}
@@ -127,7 +126,7 @@ const HelperButtonSelect = ({ position }) => {
                                 const ctx = canvas.getContext('2d');
                                 canvas.width = 64;
                                 canvas.height = 32;
-                                ctx.fillStyle = '#e24a4a';
+                                ctx.fillStyle = '#ff4a4a';
                                 ctx.font = 'bold 24px Arial';
                                 ctx.textAlign = 'center';
                                 ctx.textBaseline = 'middle';

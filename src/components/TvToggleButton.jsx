@@ -7,7 +7,7 @@ const TvToggleButton = () => {
     const { state, setState } = useAppContext();
     return (
         <div
-            className="fixed top-16 right-4 z-20 p-3"
+            className="fixed top-16 right-5 z-20 p-3"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
