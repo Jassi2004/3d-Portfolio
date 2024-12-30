@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import React, { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -15,12 +16,12 @@ const HelperButtonSelect = ({ position }) => {
     const [isAnimating, setIsAnimating] = useState(false);
 
     const channels = [
-        { number: 1, name: "About", path: "/about", color: "#4ca6ff" },
+        { number: 1, name: "Resume", path: "/main", color: "#4ca6ff" },
         { number: 2, name: "Education", path: "/education", color: "#4ca6ff" },
-        { number: 3, name: "Experience", path: "/experience", color: "#4ca6ff" },
-        { number: 4, name: "Skills", path: "/skills", color: "#4ca6ff" },
-        { number: 5, name: "Projects", path: "/projects", color: "#4ca6ff" },
-        { number: 6, name: "Contact", path: "/contact", color: "#4ca6ff" },
+        { number: 3, name: "Projects", path: "/projects", color: "#4ca6ff" },
+        { number: 4, name: "Experience", path: "/experience", color: "#4ca6ff" },
+        { number: 5, name: "Accomplishments", path: "/accomplishments", color: "#4ca6ff" },
+        { number: 6, name: "Skills", path: "/skills", color: "#4ca6ff" }
     ];
 
     const handleSelectClick = (event) => {
@@ -28,7 +29,10 @@ const HelperButtonSelect = ({ position }) => {
 
         if (isAnimating) return;
 
-        const currentChannel = channels[state.currentChannel];
+        const currentChannel = channels[state.currentChannel - 1];
+        // if(currentChannel == 6)
+        console.log(currentChannel);
+
 
         if (currentChannel) {
             setIsAnimating(true);
@@ -39,7 +43,7 @@ const HelperButtonSelect = ({ position }) => {
             // Navigate after animation
             setTimeout(() => {
                 navigate(currentChannel.path);
-                setCurrentPerspective("defaultPerspective");
+                setCurrentPerspective("changeChannelPerspective");
                 setIsAnimating(false);
             }, 1000);
         }
@@ -61,7 +65,7 @@ const HelperButtonSelect = ({ position }) => {
     });
 
     return (
-        <group position={position} scale={[1, 1, 0.52]}>
+        <group position={position} scale={[1, 1, 0.48]}>
             <mesh
                 ref={buttonRef}
                 onPointerDown={handleSelectClick}
@@ -76,7 +80,7 @@ const HelperButtonSelect = ({ position }) => {
                 />
             </mesh>
 
-            <group position={[0, -0.002, 0.035]}>
+            <group position={[-0.002, -0.006, 0.05]}>
                 <mesh ref={textRef}>
                     <planeGeometry args={[0.03, 0.015]} />
                     <meshStandardMaterial
@@ -108,7 +112,7 @@ const HelperButtonSelect = ({ position }) => {
 
                 <mesh
                     ref={textGlowRef}
-                    position={[0, 0, -0.001]}
+                    position={[0, -0.005, -0.005]}
                     scale={[1.2, 1.2, 1]}
                 >
                     <planeGeometry args={[0.03, 0.015]} />

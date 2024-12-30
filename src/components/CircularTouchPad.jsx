@@ -14,28 +14,29 @@ const CircularTouchPad = ({ position }) => {
     const downArrowGlowRef = useRef(null);
     const [glowIntensity, setGlowIntensity] = useState(1);
 
-    const { state, setState, setCurrentPerspective } = useAppContext();
+    const { state, setCurrentChannel } = useAppContext();
 
     const { isTvOn } = state;
 
     const handleNextClick = () => {
         if (!isTvOn) return;
-
+        setCurrentChannel(state.currentChannel < 6 ? state.currentChannel + 1 : 1);
+        // setState(prev => ({
+        //     ...prev,
+        //     currentChannel: prev.currentChannel < 6 ? prev.currentChannel + 1 : 1
+        // }));
         console.log("next click currentChannel", state.currentChannel);
-        setState(prev => ({
-            ...prev,
-            currentChannel: prev.currentChannel < 6 ? prev.currentChannel + 1 : 1
-        }));
     };
 
     const handlePrevClick = () => {
         if (!isTvOn) return;
-        console.log("prev clicked currentChannel", state.currentChannel);
+        setCurrentChannel(state.currentChannel > 1 ? state.currentChannel - 1 : 6);
 
-        setState(prev => ({
-            ...prev,
-            currentChannel: prev.currentChannel > 1 ? prev.currentChannel - 1 : 6
-        }));
+        // setState(prev => ({
+        //     ...prev,
+        //     currentChannel: prev.currentChannel > 1 ? prev.currentChannel - 1 : 6
+        // }));
+        console.log("prev clicked currentChannel", state.currentChannel);
     };
 
     // Match power button's glow animation timing
@@ -67,6 +68,8 @@ const CircularTouchPad = ({ position }) => {
         shape.lineTo(0, 0.015);
         return shape;
     };
+
+
 
     return (
         <group position={position}>

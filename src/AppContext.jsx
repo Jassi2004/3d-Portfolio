@@ -16,7 +16,8 @@ export const AppProvider = ({ children }) => {
         camera: DEFAULT_CAMERA,
         currentPerspective: 'defaultPerspective',  // Add this to your initial state
         tvEmissiveIntensity: 2, // Default intensity
-        freeCameraMovement: false
+        freeCameraMovement: false,
+        currentChannelNumber: 1
     });
 
 
@@ -27,6 +28,12 @@ export const AppProvider = ({ children }) => {
                 isTvOn: true
             }));
         }
+    };
+    const setCurrentChannelNumber = (num) => {
+        setState((prev) => ({
+            ...prev,
+            activeCharacter: num,
+        }));
     };
 
     const setActiveCharacter = (character) => {
@@ -74,7 +81,8 @@ export const AppProvider = ({ children }) => {
         setCurrentChannel,
         setCurrentPerspective,
         setEmissiveIntensity,
-        setFreeCameraMovement
+        setFreeCameraMovement,
+        setCurrentChannelNumber
     };
 
     return (

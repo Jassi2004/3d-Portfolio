@@ -26,17 +26,24 @@ function Tv() {
 
     // Enhanced channel data with more visual properties
     const channels = [
-        { number: 1, name: "About Me", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 1, name: "Resume", color: "#4ca6ff", hoverColor: "#7dbeff" },
         { number: 2, name: "Education", color: "#4ca6ff", hoverColor: "#7dbeff" },
-        { number: 3, name: "Experience", color: "#4ca6ff", hoverColor: "#7dbeff" },
-        { number: 4, name: "Skills", color: "#4ca6ff", hoverColor: "#7dbeff" },
-        { number: 5, name: "Projects", color: "#4ca6ff", hoverColor: "#7dbeff" },
-        { number: 6, name: "Contact", color: "#4ca6ff", hoverColor: "#7dbeff" }
+        { number: 3, name: "Projects", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 4, name: "Experience", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 5, name: "Accomplishments", color: "#4ca6ff", hoverColor: "#7dbeff" },
+        { number: 6, name: "Skills", color: "#4ca6ff", hoverColor: "#7dbeff" }
     ];
 
     const getCurrentChannelInfo = () => {
         return channels.find(channel => channel.number === currentChannel) || channels[0];
     };
+
+    useEffect(() => {
+        if (isTvOn) {
+            console.log("Current Channel in TV component:", currentChannel);
+        }
+    }, [currentChannel, isTvOn]);  // Dependency array ensures it's logged whenever currentChannel changes
+
 
     useEffect(() => {
         if (isTvOn) {
@@ -106,7 +113,7 @@ function Tv() {
     // Enhanced Channel Grid Component with animations and hover effects
     const ChannelGrid = () => {
         return (
-            <group position={[1, 3.2, position.z + 0.3]}>
+            <group position={[1.1, 3.2, position.z + 0.3]}>
                 {channels.map((channel, index) => {
                     const row = Math.floor(index / gridColumns);
                     const col = index % gridColumns;
@@ -198,9 +205,9 @@ function Tv() {
                             </Text>
 
                             <Text
-                                position={[0.2, 0, 0]}
+                                position={[-0.5, 0, 0]}
                                 fontSize={0.16}
-                                color={isSelected ? '#ffffff' : (isHovered ? '#ffffff' : '#999999')}
+                                color={isSelected ? '#ffffff' : (isHovered ? '#ffffff' : '#ffffff')}
                                 anchorX="left"
                                 anchorY="middle"
                                 opacity={opacityAnimation}
