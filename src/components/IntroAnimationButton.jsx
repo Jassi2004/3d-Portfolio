@@ -6,7 +6,7 @@ const IntroAnimationButton = ({ setCurrentPerspective }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [hasBeenClicked, setHasBeenClicked] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const { setActiveCharacter, setIsTvOn } = useAppContext();
+    const { setActiveCharacter, setIsTvOn, state, setState } = useAppContext();
     const activeStepRef = useRef(null);
 
     useEffect(() => {
@@ -66,6 +66,12 @@ const IntroAnimationButton = ({ setCurrentPerspective }) => {
 
             setTimeout(() => {
                 setIsTvOn();
+                if (!state.isDarkMode) {
+                    setState(prev => ({
+                        ...prev,
+                        isDarkMode: true
+                    }));
+                }
             }, 1000);
 
         } catch (error) {
