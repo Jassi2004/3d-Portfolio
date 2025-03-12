@@ -8,9 +8,13 @@ import {
     Copy,
     Check,
     MessageSquare,
-    ExternalLink
+    ExternalLink,
+    X
 } from 'lucide-react';
 import { resumeData } from '../../resumeInfo';
+import { useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
+
 
 const ContactCard = ({ icon: Icon, label, value, link, onClick }) => {
     const [copied, setCopied] = useState(false);
@@ -84,11 +88,47 @@ export const ContactPage = () => {
             })
         ]);
     };
+    const navigate = useNavigate();
+
+    
+    const handleClose = () => {
+        const tl = gsap.timeline({
+            onComplete: () => navigate('/')
+        });
+
+        tl.to(sectionsRef.current.children, {
+            y: 50,
+            opacity: 0,
+            stagger: 0.1,
+            duration: 0.3
+        })
+            .to(headerRef.current, {
+                y: -30,
+                opacity: 0,
+                duration: 0.3
+            }, "-=0.2")
+            .to(contentRef.current, {
+                scale: 0.9,
+                y: 50,
+                opacity: 0,
+                duration: 0.3
+            }, "-=0.2")
+            .to(overlayRef.current, {
+                opacity: 0,
+                duration: 0.3
+            }, "-=0.2");
+    };
 
     return (
         <div className="min-h-screen w-full bg-[#CFFFFF] p-8">
             <div className="max-w-2xl mx-auto">
                 <div className="bg-gray-900/90 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
+                    <button
+                        onClick={handleClose}
+                        className="absolute right-6 top-6 p-2 rounded-full hover:bg-gray-800/50 transition-colors group z-10"
+                    >
+                        <X className="h-6 w-6 text-gray-400 group-hover:text-white" />
+                    </button>
                     <div className="p-8">
                         <div className="flex items-center gap-4 mb-8">
                             <MessageSquare className="h-8 w-8 text-purple-500" />

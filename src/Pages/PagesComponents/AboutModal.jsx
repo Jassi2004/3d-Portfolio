@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { X, User, Mail, Phone, Linkedin, Github, Code, Target } from 'lucide-react';
+import { X, User, Mail, Phone, Linkedin, Github, Code, Target, LinkedinIcon } from 'lucide-react';
 import gsap from 'gsap';
 import { useNavigate } from 'react-router-dom';
 import { resumeData } from '../../resumeInfo';
@@ -132,7 +132,7 @@ export const AboutModal = () => {
                                             <span>{personalInfo.phone}</span>
                                         </div>
                                         <div className="flex items-center gap-3 text-gray-300">
-                                            <Linkedin className="h-5 w-5 text-purple-400" />
+                                            <LinkedinIcon className="h-5 w-5 text-purple-400" />
                                             <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition-colors">LinkedIn Profile</a>
                                         </div>
                                         <div className="flex items-center gap-3 text-gray-300">

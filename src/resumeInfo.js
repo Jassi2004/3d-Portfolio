@@ -6,7 +6,8 @@ export const resumeData = {
         linkedin: "https://www.linkedin.com/in/jaskirat-singh-910256248/",
         github: "https://github.com/Jassi2004",
         leetcode: "https://leetcode.com/u/Jassi2004/",
-        profileTitle: "Software Developer"
+        profileTitle: "Software Developer",
+        photo: "/assets/photos/photo.jpeg"
     },
     education: [
         {
@@ -76,7 +77,7 @@ export const resumeData = {
                 "Gained recognition in the tech community for its innovative use of AI in fitness tracking."
             ],
             technologies: ["Next.js", "TypeScript", "MediaPipe", "Redis", "React.js", "AWS", "MongoDB"],
-            link: "https://github.com/Jassi2004/Fitter_Health_v1"
+            link: "https://github.com/Jassi2004/fit-freak"
         },
         {
             name: "FilePool",

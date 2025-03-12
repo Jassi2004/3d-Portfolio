@@ -25,7 +25,7 @@ const CircularTouchPad = ({ position }) => {
         //     ...prev,
         //     currentChannel: prev.currentChannel < 6 ? prev.currentChannel + 1 : 1
         // }));
-        console.log("next click currentChannel", state.currentChannel);
+        //console.log("next click currentChannel", state.currentChannel);
     };
 
     const handlePrevClick = () => {
@@ -36,7 +36,7 @@ const CircularTouchPad = ({ position }) => {
         //     ...prev,
         //     currentChannel: prev.currentChannel > 1 ? prev.currentChannel - 1 : 6
         // }));
-        console.log("prev clicked currentChannel", state.currentChannel);
+        //console.log("prev clicked currentChannel", state.currentChannel);
     };
 
     // Match power button's glow animation timing

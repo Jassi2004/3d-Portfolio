@@ -39,12 +39,6 @@ function Tv() {
         return channels.find(channel => channel.number === currentChannel) || channels[0];
     };
 
-    useEffect(() => {
-        if (isTvOn) {
-            console.log("Current Channel in TV component:", currentChannel);
-        }
-    }, [currentChannel, isTvOn]);  // Dependency array ensures it's logged whenever currentChannel changes
-
 
     useEffect(() => {
         if (isTvOn) {

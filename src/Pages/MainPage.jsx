@@ -219,13 +219,13 @@ function MainPage() {
                                                 <h3 className="text-2xl font-bold text-white mb-4">{personalInfo.name}</h3>
                                                 <h4 className="text-xl text-purple-400 mb-6">{personalInfo.profileTitle}</h4>
                                             </div>
-                                            {/* <div className="flex items-center gap-3 text-gray-300 col-span-1 md:col-span-2">
-                                        <img
+                                            <div className="flex items-center gap-3 text-gray-300 col-span-1 md:col-span-2">
+                                        {/* <img
                                             src={personalInfo.photo}
                                             alt="Profile"
                                             className="w-24 h-24 rounded-full border-2 border-purple-400 object-cover"
-                                        />
-                                    </div> */}
+                                        /> */}
+                                    </div>
 
                                             <div className="grid grid-cols-1 w-3/4 md:grid-cols-2 gap-4 mb-6">
                                                 <div className="flex items-center gap-3 text-gray-300">
@@ -254,7 +254,7 @@ function MainPage() {
 
                                         <div className=' w-44 rounded-sm'>
                                             <img
-                                                src='../../public/assets/photos/photo.jpeg'
+                                                src='/assets/photos/photo.jpeg'
                                                 alt="Profile"
                                                 className="w-full h-full rounded-sm border-2 border-purple-400 object-cover"
                                             />

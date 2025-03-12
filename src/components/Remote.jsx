@@ -72,7 +72,7 @@ function Remote() {
         if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
             if (clickedObject.name === "Power_button_Frame_logo_0") {
-                console.log('Power Button clicked!');
+                //console.log('Power Button clicked!');
                 setState(prev => ({ ...prev, isTvOn: !state.isTvOn }));
             }
         }
