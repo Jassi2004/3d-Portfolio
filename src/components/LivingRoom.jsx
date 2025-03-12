@@ -50,9 +50,9 @@ function LoadingFallback() {
 // Main component with error boundary
 function LivingRoom() {
     return (
-        <Suspense fallback={<LoadingFallback />}>
+        // <Suspense fallback={<LoadingFallback />}>
             <LivingRoomModel />
-        </Suspense>
+        // </Suspense>
     );
 }
 

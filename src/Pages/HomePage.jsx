@@ -109,7 +109,7 @@ const HomePage = () => {
     const controlsRef = useRef();
 
     return (
-        <Suspense fallback={<LoadingScreen />}>
+        // <Suspense fallback={<LoadingScreen />}>
             <div className="relative w-full h-screen">
                 {/* Camera perspective buttons */}
                 <CameraDropdown />
@@ -136,15 +136,10 @@ const HomePage = () => {
                         />
                     )}
 
-                    {/* <Suspense fallback={null}> */}
-                    {/* <ThreeDErrorBoundary> */}
-                        {/* <Suspense fallback={<LoadingScreen />}> */}
                             <LivingRoom />
                             <Tv />
                             <Lamp />
                             <TreeLamp />
-                        {/* </Suspense> */}
-                    {/* </ThreeDErrorBoundary> */}
                     <Character />
 
                     {state.currentPerspective === 'changeChannelPerspective' && (
@@ -178,7 +173,7 @@ const HomePage = () => {
                     />
                 </Canvas>
             </div>
-        </Suspense>
+        // </Suspense>
     );
 };
 
