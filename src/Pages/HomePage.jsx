@@ -114,7 +114,7 @@ const HomePage = () => {
                 {/* Camera perspective buttons */}
                 <CameraDropdown />
 
-                <ControlButtons />
+                {/* <ControlButtons /> */}
 
                 {/* Intro Animation Button */}
                 <IntroAnimationButton
@@ -136,10 +136,10 @@ const HomePage = () => {
                         />
                     )}
 
-                            <LivingRoom />
-                            <Tv />
-                            <Lamp />
-                            <TreeLamp />
+                    <LivingRoom />
+                    <Tv />
+                    <Lamp />
+                    <TreeLamp />
                     <Character />
 
                     {state.currentPerspective === 'changeChannelPerspective' && (
@@ -163,7 +163,6 @@ const HomePage = () => {
                             radius={0.8}
                         />
                     </EffectComposer>
-                    {/* </Suspense> */}
 
                     <OrbitControls
                         ref={controlsRef}
@@ -173,7 +172,6 @@ const HomePage = () => {
                     />
                 </Canvas>
             </div>
-        // </Suspense>
     );
 };
 
