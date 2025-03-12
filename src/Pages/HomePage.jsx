@@ -114,19 +114,6 @@ const HomePage = () => {
                 {/* Camera perspective buttons */}
                 <CameraDropdown />
 
-                {/* Dark mode toggle */}
-                {/* TV toggle */}
-                {/* <button
-                    onClick={() => setState(prev => ({ ...prev, isDarkMode: !state.isDarkMode }))}
-                    className="fixed top-4 right-4 px-4 py-2 bg-gray-800 text-white rounded-md z-10 hover:bg-gray-700"
-                >
-                    {state.isDarkMode ? "Light Mode" : "Dark Mode"}
-                </button>
-
-                <TvToggleButton />
-
-                <QuickContactButton /> */}
-
                 <ControlButtons />
 
                 {/* Intro Animation Button */}
@@ -150,14 +137,14 @@ const HomePage = () => {
                     )}
 
                     {/* <Suspense fallback={null}> */}
-                    <ThreeDErrorBoundary>
-                        <Suspense fallback={<LoadingScreen />}>
+                    {/* <ThreeDErrorBoundary> */}
+                        {/* <Suspense fallback={<LoadingScreen />}> */}
                             <LivingRoom />
                             <Tv />
                             <Lamp />
                             <TreeLamp />
-                        </Suspense>
-                    </ThreeDErrorBoundary>
+                        {/* </Suspense> */}
+                    {/* </ThreeDErrorBoundary> */}
                     <Character />
 
                     {state.currentPerspective === 'changeChannelPerspective' && (

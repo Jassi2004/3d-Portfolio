@@ -23,11 +23,11 @@ const CAMERA_PERSPECTIVES = {
         target: new Vector3(0, 1, -5),
         label: 'Tv Channel'
     },
-    intoTheTvPerspective: {
-        position: new Vector3(0, 2, -4),
-        target: new Vector3(0, 2.5, -5.2),
-        label: 'Enter Section'
-    },
+    // intoTheTvPerspective: {
+    //     position: new Vector3(0, 2, -4),
+    //     target: new Vector3(0, 2.5, -5.2),
+    //     label: 'Enter Section'
+    // },
     perspective2: {
         position: new Vector3(-4, 2, -4),
         target: new Vector3(0, 0, 0),
