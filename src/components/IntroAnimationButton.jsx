@@ -13,6 +13,13 @@ const PremiumIntroButton = ({ setCurrentPerspective }) => {
         if (hasPlayed === 'true') {
             setHasBeenClicked(true);
         }
+
+        // Set a timeout to remove the introAnimationPlayed item after 5 minutes
+        const timeoutId = setTimeout(() => {
+            localStorage.removeItem('introAnimationPlayed');
+            setHasBeenClicked(false);
+        }, 5 * 60 * 1000); // 5 minutes in milliseconds
+        return () => clearTimeout(timeoutId);
     }, []);
 
     const setStateAndAnimation = (character, perspective) => {
